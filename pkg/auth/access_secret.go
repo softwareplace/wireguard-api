@@ -9,6 +9,7 @@ import (
 	"github.com/eliasmeireles/wireguard-api/pkg/domain/repository/api_secret"
 	"github.com/eliasmeireles/wireguard-api/pkg/handlers/request"
 	"github.com/eliasmeireles/wireguard-api/pkg/handlers/shared"
+	"github.com/eliasmeireles/wireguard-api/pkg/utils/env"
 	"log"
 	"net/http"
 	"os"
@@ -18,6 +19,7 @@ var (
 	// apiSecret is expected to be an environment variable, adjust as needed
 	apiSecret             any // Replace with logic to fetch from environment variables or similar
 	mustValidatePublicKey = false
+	appEnv                = env.AppEnv()
 )
 
 type ApiSecurityHandler interface {
@@ -50,7 +52,7 @@ func (a *apiSecurityHandlerImpl) Middleware(next http.Handler) http.Handler {
 // If apiSecret is provided, it ensures the private key from the specified path can be loaded.
 // The application will crash if the private key cannot be loaded.
 func (a *apiSecurityHandlerImpl) InitAPISecretKey() {
-	if secretKey := os.Getenv("API_SECRET_KEY"); secretKey != "" {
+	if secretKey := appEnv.ApiSecretKey; secretKey != "" {
 		// Load private key from the provided secretKey file path
 		privateKeyData, err := os.ReadFile(secretKey)
 		if err != nil {

@@ -6,13 +6,12 @@ import (
 	"github.com/eliasmeireles/wireguard-api/pkg/handlers/request"
 	"github.com/eliasmeireles/wireguard-api/pkg/handlers/shared"
 	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	envUtils "github.com/eliasmeireles/wireguard-api/pkg/utils/env"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 )
-
-import "os"
 
 func (a *apiSecurityServiceImpl) Validation(
 	ctx *request.ApiRequestContext,
@@ -85,7 +84,7 @@ func (a *apiSecurityServiceImpl) JWTClaims(ctx *request.ApiRequestContext) (map[
 }
 
 func (a *apiSecurityServiceImpl) Secret() []byte {
-	secret := os.Getenv("API_SECRET_AUTHORIZATION")
+	secret := envUtils.AppEnv().ApiSecretAuthorization
 	if secret == "" {
 		panic("API_SECRET_AUTHORIZATION environment variable is required")
 	}

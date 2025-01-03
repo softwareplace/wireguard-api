@@ -2,11 +2,13 @@ package db
 
 import (
 	"context"
+	"github.com/eliasmeireles/wireguard-api/pkg/utils/env"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"os"
 )
+
+var dbEnv = env.AppEnv().DBEnv
 
 func InitMongoDB() {
 	connectionChecker()
@@ -14,14 +16,14 @@ func InitMongoDB() {
 }
 
 func GetDB() *mongo.Database {
-	return GetDBClient().Database(os.Getenv("MONGO_DATABASE"))
+	return GetDBClient().Database(dbEnv.DatabaseName)
 }
 
 func GetDBClient() *mongo.Client {
 
-	username := os.Getenv("MONGO_USERNAME")
-	password := os.Getenv("MONGO_PASSWORD")
-	uri := os.Getenv("MONGO_URI")
+	username := dbEnv.Username
+	password := dbEnv.Password
+	uri := dbEnv.Uri
 	if username == "" || password == "" || uri == "" {
 		log.Panicf("MongoDB environment variables are missing or incomplete")
 	}

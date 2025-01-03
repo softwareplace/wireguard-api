@@ -30,7 +30,7 @@ func (a *apiRouterHandlerImpl) PublicRouter(
 	method string,
 ) {
 	a.Add(handler, path, method)
-	auth.AddOpenPath(method + "::" + basePath + path)
+	auth.AddOpenPath(method + "::" + appEnv.ContextPath + path)
 }
 
 func (a *apiRouterHandlerImpl) Add(
@@ -38,7 +38,7 @@ func (a *apiRouterHandlerImpl) Add(
 	path string,
 	method string,
 ) {
-	apiRoute.HandleFunc(basePath+path, handler).Methods(method)
+	apiRoute.HandleFunc(appEnv.ContextPath+path, handler).Methods(method)
 }
 
 func (a *apiRouterHandlerImpl) Get(handler func(w http.ResponseWriter, r *http.Request), path string) {

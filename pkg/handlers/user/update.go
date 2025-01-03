@@ -16,11 +16,13 @@ func (h *handlerImpl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	requestContext := request.Build(w, r)
+	build := request.Build(w, r)
+	accessContext := build.GetAccessContext()
 
-	currentUser, success := h.ApiSecurityService().Validation(&requestContext, isCurrentUser(h))
+	currentUser, err := h.UsersRepository().FindUserBySalt(accessContext.AccessId)
 
-	if !success {
+	if err != nil {
+		shared.MakeErrorResponse(w, "Error finding user in the database", http.StatusInternalServerError)
 		return
 	}
 
@@ -52,17 +54,4 @@ func (h *handlerImpl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	shared.MakeResponse(w, map[string]interface{}{"message": "User updated successfully"}, http.StatusOK)
-}
-
-func isCurrentUser(h *handlerImpl) func(ctx *request.ApiRequestContext) (*models.User, bool) {
-	return func(ctx *request.ApiRequestContext) (*models.User, bool) {
-		accessContext := ctx.GetAccessContext()
-		userData, err := h.UsersRepository().FindUserBySalt(accessContext.AccessId)
-		if err != nil {
-			shared.MakeErrorResponse(ctx.Writer, "Authorization failed", http.StatusForbidden)
-			return nil, false
-		}
-		ctx.SetUser(userData)
-		return userData, true
-	}
 }

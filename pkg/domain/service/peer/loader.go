@@ -12,7 +12,7 @@ import (
 )
 
 func (s *serviceImpl) Load() {
-	peerResourcePath := envUtils.GetPeerResourcePath()
+	peerResourcePath := envUtils.AppEnv().PeerResourcePath
 
 	// Define the pattern for matching file names
 	pattern := regexp.MustCompile(`.*peer.*\.conf`)
