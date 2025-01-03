@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:5.0.31-rc0-focal
+    container_name: mongo
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./scripts/docker/mongo/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=wireguardUserl9Yrk0K2Eq
+      - MONGO_INITDB_ROOT_PASSWORD=cCNdBLDcjA8ojoovY4VdBkhduU
+      - MONGO_INITDB_DATABASE=private_network
+    networks:
+      - wireguard-api-network
+  wireguard-api:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - /etc/wireguard:/etc/wireguard
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - MONGO_USERNAME=wireguardUserl9Yrk0K2Eq
+      - MONGO_PASSWORD=cCNdBLDcjA8ojoovY4VdBkhduU
+      - MONGO_DATABASE=private_network
+      - API_SECRET_AUTHORIZATION=wOt1H5qnksTpImxCcU9VMMIVu
+    restart: on-failure
+    depends_on:
+      - mongo
+    networks:
+      - wireguard-api-network
+
+volumes:
+  mongo-data:
+
+networks:
+  wireguard-api-network:
+    driver: bridge
+
