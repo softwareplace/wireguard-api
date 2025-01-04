@@ -8,7 +8,7 @@ import (
 
 const (
 	AccessContextKey = "userAccessContext"
-	xApiKey          = "X-Api-Key"
+	XApiKey          = "X-Api-Key"
 )
 
 type ApiRequestContext struct {
@@ -41,7 +41,7 @@ func (ctx *ApiRequestContext) GetAccessContext() *AccessContext {
 
 	if accessUserContext == nil {
 		accessUserContext = &AccessContext{
-			ApiKey:        ctx.Request.Header.Get(xApiKey),
+			ApiKey:        ctx.Request.Header.Get(XApiKey),
 			Authorization: ctx.Request.Header.Get("Authorization"),
 		}
 	}

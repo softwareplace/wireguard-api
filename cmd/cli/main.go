@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/softwareplace/wireguard-api/cmd/cli/connect"
 	"github.com/softwareplace/wireguard-api/cmd/cli/profile"
 	"github.com/softwareplace/wireguard-api/cmd/cli/server"
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
@@ -28,10 +29,12 @@ func main() {
 	} else if args.Server {
 		server.Run(args)
 		os.Exit(0)
+	} else if args.Connect {
+		connect.Run(args)
+		os.Exit(0)
 	} else if args.H {
 		usage()
 		os.Exit(0)
-
 	} else {
 		log.Println("No valid flag provided. Use --help for usage information.")
 		usage()

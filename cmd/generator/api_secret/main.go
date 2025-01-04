@@ -100,7 +100,7 @@ func main() {
 		encryptedKey, err := security.GetApiSecurityService().Encrypt(string(publicKeyPEM))
 
 		if err != nil {
-			log.Fatalf("Failed to encrypt public key: %s", err)
+			log.Fatalf("Failed to sec public key: %s", err)
 			return
 		}
 

@@ -1,4 +1,4 @@
-package model
+package spec
 
 type Config struct {
 	AppVersion     string    `yaml:"appVersion"`
@@ -11,13 +11,23 @@ type Config struct {
 type Server struct {
 	Name        string `yaml:"name"`
 	Host        string `yaml:"host"`
+	ApiKey      string `yaml:"apiKey"`
 	Description string `yaml:"description"`
 }
 
 type Profile struct {
 	Name        string `yaml:"name"`
-	ApiKey      string `yaml:"apiKey"`
 	Description string `yaml:"description"`
+	AccessToken string `json:"token" yaml:"access-id"`
+	Expires     string `json:"expires" yaml:"expires"`
+}
+
+func (conf *Config) GetServer() *Server {
+	return conf.FindServer(conf.CurrentServer)
+}
+
+func (conf *Config) GetProfile() *Profile {
+	return conf.FindProfile(conf.CurrentProfile)
 }
 
 func (conf *Config) FindProfile(name string) *Profile {

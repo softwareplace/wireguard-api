@@ -1,13 +1,13 @@
 package shared
 
 import (
-	"github.com/softwareplace/wireguard-api/cmd/cli/model"
+	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
 )
 
-func LoadConfig() *model.Config {
+func LoadConfig() *spec.Config {
 	// Open the file
 	file, err := os.Open(ContextPath + "conf.yaml")
 	if err != nil {
@@ -21,7 +21,7 @@ func LoadConfig() *model.Config {
 	}(file)
 
 	// Decode the YAML into the Config struct
-	var config model.Config
+	var config spec.Config
 	decoder := yaml.NewDecoder(file)
 	if err := decoder.Decode(&config); err != nil {
 		log.Fatal("failed to decode config YAML: %w", err)
@@ -30,7 +30,7 @@ func LoadConfig() *model.Config {
 	return &config
 }
 
-func SaveConfig(config *model.Config) {
+func SaveConfig(config *spec.Config) {
 	// Open the file
 	file, err := os.Create(ContextPath + "conf.yaml")
 	if err != nil {

@@ -1,23 +1,13 @@
 appVersion: v1
-current-server: eliasmeireles-server
+current-server: development
 current-profile: eliasmeireles
 servers:
   - name: development
-    host: http://localhost:8080
+    host: http://localhost:8080/api/private-network/v1
+    apiKey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnQiOiJTb2Z0d2FyZSBQbGFjZSBDTyIsImV4cCI6MjA1MTYwMzA2Mywia2V5IjoibDNWcEovQmY1eTZhcVRpZGxZUy9meTZoY2lObTNqRzdvQWxHS2kzZVU5NkNWeHZITFVpeDl3PT0ifQ.2YJ3aBYT_3SgqTqhEyNJwK6iglCYCHvPRbCWc4MKzp0
     description: Development server
-  - name: staging
-    host: http://staging.example.com
-    description: Staging server
-  - name: eliasmeireles-server
-    host: localhost:8080
-    description: test desc
 profiles:
-  - name: development
-    apiKey: development-api-key
-    description: Development server
-  - name: staging
-    apiKey: staging-api-key
-    description: Staging server
   - name: eliasmeireles
-    apiKey: my-api-key
-    description: ""
+    description: Development server
+    access-id: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYwMjk1NjAsInJlcXVlc3QiOiJnZHFySEZqazM1eGVzQlQ0ZmFGbGU3Q0JlQktmZ1ZKNkpRTFpaMHpIQkJHNGMyQjZKYnplaEZBN0tpTFdkU25KIiwic2NvcGUiOiJUSlNhb1NhS3pIQjZjT3l0SkdMbW5ib3VYOXVqIn0.rQoViV5pvzzsgqTjpoWWCTaKnT4Mude_bvOkqYyrFdA
+    expires: "1736029560"

@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/softwareplace/wireguard-api/cmd/cli/model"
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
+	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"log"
 	"os"
 )
@@ -19,7 +19,7 @@ func (api *apiIml) remove(args *shared.Args) {
 	config := shared.LoadConfig()
 
 	if args.All {
-		config.Servers = []model.Server{}
+		config.Servers = []spec.Server{}
 	}
 
 	if args.Name != "" {

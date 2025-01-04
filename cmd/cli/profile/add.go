@@ -2,8 +2,8 @@ package profile
 
 import (
 	"fmt"
-	"github.com/softwareplace/wireguard-api/cmd/cli/model"
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
+	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"log"
 	"os"
 )
@@ -14,7 +14,7 @@ func (api *apiIml) add(args *shared.Args) {
 		addUsage(0)
 	}
 
-	if args.Name == "" || args.ApiKey == "" {
+	if args.Name == "" {
 		addUsage(1)
 	}
 
@@ -25,9 +25,8 @@ func (api *apiIml) add(args *shared.Args) {
 		log.Fatalf("Profile %s already exists", args.Name)
 	}
 
-	config.Profiles = append(config.Profiles, model.Profile{
+	config.Profiles = append(config.Profiles, spec.Profile{
 		Name:        args.Name,
-		ApiKey:      args.ApiKey,
 		Description: args.Description,
 	})
 
@@ -39,7 +38,6 @@ func (api *apiIml) add(args *shared.Args) {
 func addUsage(exit int) {
 	fmt.Println("Add profile usage:")
 	fmt.Println("  --name (required) - The name of the profile to add.")
-	fmt.Println("  --api-key (required) - The API key of the profile to add.")
 	fmt.Println("  --description - The description of the profile to add.")
 	fmt.Println("  --help - View help information.")
 	os.Exit(exit)

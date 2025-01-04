@@ -27,7 +27,7 @@ func (api *apiIml) servers(args *shared.Args) {
 		if args.N {
 			log.Printf("Name: %s\n", server.Name)
 		} else {
-			log.Printf("Name: %s\n\tDescription: %s\n\t", server.Name, server.Description)
+			log.Printf("Name: %s\n\tAPI Key: %s\n\tDescription: %s\n\t", server.Name, server.ApiKey, server.Description)
 		}
 	}
 }

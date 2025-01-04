@@ -5,7 +5,7 @@ import (
 )
 
 type ApplicationEnv struct {
-	// ApiSecretAuthorization is the secret used for API authorization. Used to encrypt and decrypt authorization token claims.
+	// ApiSecretAuthorization is the secret used for API authorization. Used to sec and decrypt authorization token claims.
 	ApiSecretAuthorization string
 	// Port is the port on which the application runs.
 	Port string

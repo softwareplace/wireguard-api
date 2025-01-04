@@ -27,7 +27,7 @@ func (api *apiIml) profiles(args *shared.Args) {
 		if args.N {
 			log.Printf("Name: %s\n", profile.Name)
 		} else {
-			log.Printf("Name: %s\n\tAPI Key: %s\n\tDescription: %s\n\t", profile.Name, profile.ApiKey, profile.Description)
+			log.Printf("Name: %s\n\tDescription: %s\n\t", profile.Name, profile.Description)
 		}
 	}
 }
