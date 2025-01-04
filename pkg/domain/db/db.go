@@ -34,17 +34,17 @@ func GetDBClient() *mongo.Client {
 	clientOptions := options.Client().ApplyURI(uri).SetAuth(credentials)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
-		log.Panicf("Error connecting to MongoDB: %v", err)
+		log.Panicf("Database connecting to %s failed: %v", uri, err)
 	}
 	return client
 }
 
 func connectionChecker() {
-	log.Println("Checking database connection...")
+	log.Printf("Checking %s database connection...", dbEnv.Uri)
 	err := GetDBClient().Ping(context.Background(), nil)
 	if err != nil {
-		log.Panicf("MongoDB connection check failed: %v", err)
+		log.Panicf("MongoDB %s connection check failed: %v", dbEnv.Uri, err)
 	}
 
-	log.Println("Database connected successfully")
+	log.Printf("Database %s connected successfully\n", dbEnv.Uri)
 }

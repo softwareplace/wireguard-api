@@ -1,38 +1,38 @@
 # Variables
 DOCKER_COMPOSE = docker-compose
+DOCKER_COMPOSE_FILE = docker-compose.yml
+ENV = ./dev/.env
 
 # Targets
 .PHONY: up down build rebuild logs clean compile generate-api-secret help
 
 # Start all services in detached mode
 up:
-	@$(DOCKER_COMPOSE) --env-file ./dev/.env --project-name private-network up -d
+	@$(DOCKER_COMPOSE) --env-file $(ENV) --project-name private-network -f $(DOCKER_COMPOSE_FILE) up -d
 	@echo "Docker services are now running."
 
 # Stop all running services
 down:
-	@$(DOCKER_COMPOSE) --project-name private-network down
+	@$(DOCKER_COMPOSE) --project-name private-network  -f $(DOCKER_COMPOSE_FILE) down
 	@echo "Docker services stopped."
 
 # Build Docker Compose services without cache
 build:
-	@$(DOCKER_COMPOSE) --env-file ./dev/.env --project-name private-network build --no-cache
+	@$(DOCKER_COMPOSE) --env-file $(ENV) --project-name private-network  -f $(DOCKER_COMPOSE_FILE) build --no-cache
 	@echo "Docker images have been built."
 
 # Rebuild and restart services
 rebuild:
-	@$(DOCKER_COMPOSE) --project-name private-network down
-	@$(DOCKER_COMPOSE) --env-file ./dev/.env --project-name private-network up --build -d
+	@$(DOCKER_COMPOSE) --env-file $(ENV) --project-name private-network  -f $(DOCKER_COMPOSE_FILE) up --build -d
 	@echo "Docker services have been rebuilt and started."
 
 # Show logs from Docker Compose services
 logs:
-	@$(DOCKER_COMPOSE) --project-name private-network logs -f
+	@$(DOCKER_COMPOSE) --project-name wireguard-api -f $(DOCKER_COMPOSE_FILE) logs -f
 
 # Clean up dangling images, stopped containers, and unused networks
 clean:
-	@${DOCKER_COMPOSE} --project-name private-network down --rmi all --volumes --remove-orphans
-	@docker volumes rm
+	@$(DOCKER_COMPOSE) --project-name private-network -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes --remove-orphans
 	@echo "Cleaned up unused Docker resources."
 
 # Show all available commands
@@ -55,4 +55,4 @@ compile:
 	@docker run --rm -v $(PWD)/.temp:/output wireguard-api-compiler
 
 generate-api-secret:
-	@docker exec -it private-network-wireguard-api api-key-generator --exp 87660 --client "Software Place CO"
+	@docker exec -it wireguard-api api-key-generator --exp 87660 --client "Software Place CO"

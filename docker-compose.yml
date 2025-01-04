@@ -1,15 +1,15 @@
-version: '3.8'
+version: '3.9'
 
 services:
   mongo:
     image: mongo:5.0.31-rc0-focal
-    container_name: private-network-wireguard-api-mongo
+    container_name: ${MONGO_CONTAINER_NAME}
     restart: always
     ports:
-      - "27017:27017"
+      - "${MONGO_PORT}:27017"
     volumes:
       - ./scripts/docker/mongo/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
-      - mongo-data:/data/db
+      - wireguard-api-mongo-data:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
@@ -18,17 +18,17 @@ services:
       - wireguard-api-network
 
   wireguard-api:
-    container_name: private-network-wireguard-api
+    container_name: ${APP_CONTAINER_NAME}
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - PORT=${PORT}
     ports:
-      - "8080:8080"
+      - "${PORT}:${PORT}"
     volumes:
-      - /etc/wireguard:/etc/wireguard
-      - ./dev/secret:/etc/secret
+      - ${PEERS_RESOURCE_PATH}:/etc/wireguard
+      - ${API_SECRET_PATH}:/etc/secret
     environment:
       - API_SECRET_KEY=${API_SECRET_KEY}
       - MONGO_URI=${MONGO_URI}
@@ -43,7 +43,7 @@ services:
       - wireguard-api-network
 
 volumes:
-  mongo-data:
+  wireguard-api-mongo-data:
 
 networks:
   wireguard-api-network:
