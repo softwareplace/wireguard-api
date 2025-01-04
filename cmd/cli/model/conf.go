@@ -37,3 +37,21 @@ func (conf *Config) RemoveProfile(name string) {
 		}
 	}
 }
+
+func (conf *Config) FindServer(name string) *Server {
+	for _, server := range conf.Servers {
+		if server.Name == name {
+			return &server
+		}
+	}
+	return nil
+}
+
+func (conf *Config) RemoveServer(name string) {
+	for i, server := range conf.Servers {
+		if server.Name == name {
+			conf.Servers = append(conf.Servers[:i], conf.Servers[i+1:]...)
+			return
+		}
+	}
+}

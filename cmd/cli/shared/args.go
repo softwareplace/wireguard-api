@@ -6,7 +6,6 @@ import (
 
 type Args struct {
 	Profile     bool
-	Setup       bool
 	Server      bool
 	Name        string
 	Host        string
@@ -33,7 +32,7 @@ func (a *Args) parse() {
 	command := flag.CommandLine.Name()
 
 	profile := flag.Bool("profile", false, "Run in profile mode.")
-	setup := flag.Bool("setup", false, "Run setup process.")
+	server := flag.Bool("server", false, "Run server process.")
 	h := flag.Bool("help", false, "Display help information.")
 	n := flag.Bool("n", false, "Display only the resource name.")
 	ls := flag.Bool("ls", false, "Lists all from a resource.")
@@ -49,7 +48,7 @@ func (a *Args) parse() {
 	flag.Parse()
 
 	a.Profile = *profile
-	a.Setup = *setup
+	a.Server = *server
 	a.H = *h
 	a.Ls = *ls
 	a.Add = *add

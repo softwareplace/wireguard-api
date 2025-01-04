@@ -1,5 +1,5 @@
 appVersion: v1
-current-server:
+current-server: eliasmeireles-server
 current-profile: eliasmeireles
 servers:
   - name: development
@@ -8,6 +8,9 @@ servers:
   - name: staging
     host: http://staging.example.com
     description: Staging server
+  - name: eliasmeireles-server
+    host: localhost:8080
+    description: test desc
 profiles:
   - name: development
     apiKey: development-api-key

@@ -1,4 +1,4 @@
-package profile
+package server
 
 import (
 	"fmt"
@@ -18,21 +18,21 @@ func (api *apiIml) use(args *shared.Args) {
 
 	config := shared.LoadConfig()
 
-	profile := config.FindProfile(args.Name)
-	if profile == nil {
-		log.Fatalf("Profile %s not found", args.Name)
+	server := config.FindServer(args.Name)
+	if server == nil {
+		log.Fatalf("Server %s not found", args.Name)
 	}
 
-	config.CurrentProfile = args.Name
+	config.CurrentServer = args.Name
 
 	shared.SaveConfig(config)
 
-	log.Printf("Profile %s is now in use\n", args.Name)
+	log.Printf("Server %s is now in use\n", args.Name)
 }
 
 func (api *apiIml) usage(exit int) {
-	fmt.Println("Usage of use profile:")
-	fmt.Println("  --name - The name of the profile to use.")
+	fmt.Println("Server usage:")
+	fmt.Println("  --name - The name of the server to use.")
 	fmt.Println("  --help - View help information.")
 	os.Exit(exit)
 }
