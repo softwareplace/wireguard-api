@@ -2,11 +2,11 @@
 DOCKER_COMPOSE = docker-compose
 
 # Targets
-.PHONY: up down build rebuild logs clean compile help
+.PHONY: up down build rebuild logs clean compile generate-api-secret help
 
 # Start all services in detached mode
 up:
-	@$(DOCKER_COMPOSE) --project-name private-network up -d
+	@$(DOCKER_COMPOSE) --env-file ./dev/.env --project-name private-network up -d
 	@echo "Docker services are now running."
 
 # Stop all running services
@@ -16,13 +16,13 @@ down:
 
 # Build Docker Compose services without cache
 build:
-	@$(DOCKER_COMPOSE) --project-name private-network build --no-cache
+	@$(DOCKER_COMPOSE) --env-file ./dev/.env --project-name private-network build --no-cache
 	@echo "Docker images have been built."
 
 # Rebuild and restart services
 rebuild:
 	@$(DOCKER_COMPOSE) --project-name private-network down
-	@$(DOCKER_COMPOSE) --project-name private-network up --build -d
+	@$(DOCKER_COMPOSE) --env-file ./dev/.env --project-name private-network up --build -d
 	@echo "Docker services have been rebuilt and started."
 
 # Show logs from Docker Compose services
@@ -46,9 +46,13 @@ help:
 	@echo "  make rebuild  - Rebuild and restart all services"
 	@echo "  make logs     - View logs in real-time"
 	@echo "  make clean    - Remove unused volumes, images, and networks"
+	@echo "  make compile  - Compile the WireGuard API"
+	@echo "  make generate-api-secret - Generate a new API secret"
 	@echo "  make help     - Show this help message"
 
 compile:
 	@docker build -t wireguard-api-compiler -f DockerfileBuild .
 	@docker run --rm -v $(PWD)/.temp:/output wireguard-api-compiler
 
+generate-api-secret:
+	@docker exec -it private-network-wireguard-api api-key-generator --exp 87660 --client "Software Place CO"

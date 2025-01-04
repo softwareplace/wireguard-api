@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mongo:
     image: mongo:5.0.31-rc0-focal
-    container_name: mongo
+    container_name: private-network-wireguard-api-mongo
     restart: always
     ports:
       - "27017:27017"
@@ -11,29 +11,31 @@ services:
       - ./scripts/docker/mongo/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
       - mongo-data:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=wireguardUserl9Yrk0K2Eq
-      - MONGO_INITDB_ROOT_PASSWORD=cCNdBLDcjA8ojoovY4VdBkhduU
-      - MONGO_INITDB_DATABASE=private_network
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
     networks:
       - wireguard-api-network
+
   wireguard-api:
+    container_name: private-network-wireguard-api
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - PORT=8080
+        - PORT=${PORT}
     ports:
       - "8080:8080"
     volumes:
       - /etc/wireguard:/etc/wireguard
       - ./dev/secret:/etc/secret
     environment:
-      - API_SECRET_KEY=/etc/secret/private.key
-      - MONGO_URI=mongodb://mongo:27017
-      - MONGO_USERNAME=wireguardUserl9Yrk0K2Eq
-      - MONGO_PASSWORD=cCNdBLDcjA8ojoovY4VdBkhduU
-      - MONGO_DATABASE=private_network
-      - API_SECRET_AUTHORIZATION=wOt1H5qnksTpImxCcU9VMMIVu
+      - API_SECRET_KEY=${API_SECRET_KEY}
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_DATABASE=${MONGO_INITDB_DATABASE}
+      - API_SECRET_AUTHORIZATION=${API_SECRET_AUTHORIZATION}
     restart: always
     depends_on:
       - mongo
@@ -46,4 +48,3 @@ volumes:
 networks:
   wireguard-api-network:
     driver: bridge
-
