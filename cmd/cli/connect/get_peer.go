@@ -19,7 +19,7 @@ func GetPeer(args *shared.Args, profile *spec.Profile, config *spec.Config, serv
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set(request.XApiKey, server.ApiKey)
-	req.Header.Set("Authorization", profile.AccessToken)
+	req.Header.Set("Authorization", profile.AuthorizationKey)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)

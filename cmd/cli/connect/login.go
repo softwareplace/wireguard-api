@@ -7,6 +7,7 @@ import (
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
 	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"golang.org/x/crypto/ssh/terminal"
 	"io"
 	"log"
@@ -22,7 +23,7 @@ type LoginResponse struct {
 }
 
 func userAuthenticate(args *shared.Args, profile *spec.Profile, config *spec.Config, server *spec.Server) {
-	if profile.AccessToken != "" && profile.Expires != "" {
+	if profile.AuthorizationKey != "" && profile.Expires != "" {
 		now := time.Now()
 
 		timestamp, err := strconv.ParseInt(profile.Expires, 10, 64)
@@ -42,7 +43,7 @@ func userAuthenticate(args *shared.Args, profile *spec.Profile, config *spec.Con
 	config.Profiles = append(config.Profiles, *profile)
 
 	shared.SaveConfig(config)
-	fmt.Printf("Loggin in as %s\n", profile.Name)
+	fmt.Printf("Login successful for %s\n", profile.Name)
 }
 
 func getPassword(args *shared.Args) string {
@@ -50,18 +51,18 @@ func getPassword(args *shared.Args) string {
 		return args.Pass
 	}
 
-	fmt.Print("Enter password: ")
+	fmt.Print("Enter password for quest new authorization key: ")
 	passwordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		log.Fatalf("Failed to read password: %v", err)
 	}
 	fmt.Println() // Print a newline to separate password input from other logs
 	password := string(passwordBytes)
-	//passwordEncrypted, err := sec.Encrypt(password, []byte(sec.SampleEncryptKey))
-	//if err != nil {
-	//	log.Fatalf("Failed to encrypt password: %v", err)
-	//}
-	return password
+	passwordEncrypted, err := sec.Encrypt(password, []byte(sec.SampleEncryptKey))
+	if err != nil {
+		log.Fatalf("Failed to encrypt password: %v", err)
+	}
+	return passwordEncrypted
 }
 
 func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
@@ -107,7 +108,7 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 		log.Fatalf("Failed to decode response: %v", err)
 	}
 
-	profile.AccessToken = loginResp.AccessToken
+	profile.AuthorizationKey = loginResp.AccessToken
 	profile.Expires = loginResp.Expires
 
 }

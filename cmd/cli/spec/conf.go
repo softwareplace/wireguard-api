@@ -16,10 +16,10 @@ type Server struct {
 }
 
 type Profile struct {
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
-	AccessToken string `json:"token" yaml:"access-id"`
-	Expires     string `json:"expires" yaml:"expires"`
+	Name             string `yaml:"name"`
+	Description      string `yaml:"description"`
+	AuthorizationKey string `json:"token" yaml:"authorization-id"`
+	Expires          string `json:"expires" yaml:"expires"`
 }
 
 func (conf *Config) GetServer() *Server {

@@ -5,16 +5,26 @@ import (
 	"errors"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 	"net/http"
 )
 
 func (h *handlerImpl) Login(w http.ResponseWriter, r *http.Request) {
 	var userInput models.User
+
 	err := json.NewDecoder(r.Body).Decode(&userInput)
 	if err != nil {
 		shared.MakeErrorResponse(w, "Invalid input", http.StatusBadRequest)
 		return
+	}
+	decrypt, err := sec.Decrypt(userInput.Password, []byte(sec.SampleEncryptKey))
+
+	if err != nil {
+		log.Printf("Failed to decrypt password: %v", err)
+	} else {
+		userInput.Password = decrypt
 	}
 
 	// Validate userResponse credentials
