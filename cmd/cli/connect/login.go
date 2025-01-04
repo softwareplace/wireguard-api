@@ -11,12 +11,38 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"syscall"
+	"time"
 )
 
 type LoginResponse struct {
 	AccessToken string `json:"token"`
 	Expires     string `json:"expires"`
+}
+
+func userAuthenticate(args *shared.Args, profile *spec.Profile, config *spec.Config, server *spec.Server) {
+	if profile.AccessToken != "" && profile.Expires != "" {
+		now := time.Now()
+
+		timestamp, err := strconv.ParseInt(profile.Expires, 10, 64)
+
+		if err != nil {
+			fmt.Println("Failed to check current expiration token")
+		} else {
+			timestamp := time.Unix(timestamp, 0)
+			if timestamp.After(now) {
+				return
+			}
+		}
+	}
+
+	config.RemoveProfile(profile.Name)
+	Login(args, profile, *server)
+	config.Profiles = append(config.Profiles, *profile)
+
+	shared.SaveConfig(config)
+	fmt.Printf("Loggin in as %s\n", profile.Name)
 }
 
 func getPassword(args *shared.Args) string {

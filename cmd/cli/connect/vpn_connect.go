@@ -1,12 +1,10 @@
 package connect
 
 import (
-	"fmt"
+	"encoding/base64"
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
-	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"log"
-	"strconv"
-	"time"
+	"os"
 )
 
 func Run(args *shared.Args) {
@@ -23,28 +21,31 @@ func Run(args *shared.Args) {
 	}
 
 	userAuthenticate(args, profile, config, server)
-}
 
-func userAuthenticate(args *shared.Args, profile *spec.Profile, config *spec.Config, server *spec.Server) {
-	if profile.AccessToken != "" && profile.Expires != "" {
-		now := time.Now()
+	peer := GetPeer(args, profile, config, server)
 
-		timestamp, err := strconv.ParseInt(profile.Expires, 10, 64)
-
+	if peer.FileName != "" && peer.PeerData != "" {
+		// Decode peer.PeerData from base64
+		decodedData, err := base64.StdEncoding.DecodeString(peer.PeerData)
 		if err != nil {
-			fmt.Println("Failed to check current expiration token")
-		} else {
-			timestamp := time.Unix(timestamp, 0)
-			if timestamp.After(now) {
-				return
-			}
+			log.Fatalf("Failed to decode PeerData: %v", err)
 		}
+
+		// Create the temporary directory if it doesn't exist
+		if args.PeerSourceDir == "" {
+			args.PeerSourceDir = "/etc/wireguard"
+		}
+
+		if err := os.MkdirAll(args.PeerSourceDir, 0755); err != nil {
+			log.Fatalf("Failed to create temp directory: %v", err)
+		}
+
+		// Write the decoded data to a file
+		filePath := args.PeerSourceDir + "/" + "wg0.conf"
+		if err := os.WriteFile(filePath, decodedData, 0644); err != nil {
+			log.Fatalf("Failed to save file: %v", err)
+		}
+
+		log.Printf("Peer data successfully saved to %s", filePath)
 	}
-
-	config.RemoveProfile(profile.Name)
-	Login(args, profile, *server)
-	config.Profiles = append(config.Profiles, *profile)
-
-	shared.SaveConfig(config)
-	fmt.Printf("Loggin in as %s\n", profile.Name)
 }

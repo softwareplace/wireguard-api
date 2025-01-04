@@ -5,22 +5,23 @@ import (
 )
 
 type Args struct {
-	Profile     bool
-	Server      bool
-	Connect     bool
-	Name        string
-	Host        string
-	ApiKey      string
-	Description string
-	Command     string
-	Pass        string
-	H           bool
-	Rm          bool
-	Add         bool
-	Ls          bool
-	N           bool
-	Use         bool
-	All         bool
+	Profile       bool
+	Server        bool
+	Connect       bool
+	Name          string
+	Host          string
+	ApiKey        string
+	Description   string
+	Command       string
+	Pass          string
+	PeerSourceDir string
+	H             bool
+	Rm            bool
+	Add           bool
+	Ls            bool
+	N             bool
+	Use           bool
+	All           bool
 }
 
 func Load() *Args {
@@ -42,6 +43,7 @@ func (a *Args) parse() {
 	add := flag.Bool("add", false, "Adds a new resource.")
 	name := flag.String("name", "", "Name of the resource.")
 	description := flag.String("description", "", "The description of the resource.")
+	sourceDir := flag.String("peer-dir", "", "The directory where the peer data will be saved.")
 	pass := flag.String("pass", "", "The password used for login.")
 	apiKey := flag.String("api-key", "", "The API key of the resource.")
 	host := flag.String("host", "", "Expected host.")
@@ -64,6 +66,7 @@ func (a *Args) parse() {
 	a.N = *n
 	a.Description = *description
 	a.ApiKey = *apiKey
+	a.PeerSourceDir = *sourceDir
 	a.Command = command
 	a.All = *all
 	a.Pass = *pass

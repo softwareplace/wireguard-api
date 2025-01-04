@@ -9,5 +9,5 @@ servers:
 profiles:
   - name: eliasmeireles
     description: Development server
-    access-id: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYwMjk1NjAsInJlcXVlc3QiOiJnZHFySEZqazM1eGVzQlQ0ZmFGbGU3Q0JlQktmZ1ZKNkpRTFpaMHpIQkJHNGMyQjZKYnplaEZBN0tpTFdkU25KIiwic2NvcGUiOiJUSlNhb1NhS3pIQjZjT3l0SkdMbW5ib3VYOXVqIn0.rQoViV5pvzzsgqTjpoWWCTaKnT4Mude_bvOkqYyrFdA
-    expires: "1736029560"
+    access-id: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYwMzA1ODMsInJlcXVlc3QiOiJPVUlDWkRoWS9mSGNIc2tZejliT2ZFeG5ZYUV0ekN2bzlTSmlmMkkvdDlMaURpamNqQm1mQVExS25abnRiR1NsIiwic2NvcGUiOiJIV1p2Sko0Q2FwUEkyb1JTNk93VnFWTWF1ZEZDIn0.rx5ju6yH-amfHNcFXvbz2olSI9uFPoCvpk-YNW0clk8
+    expires: "1736030583"
