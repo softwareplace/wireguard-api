@@ -10,9 +10,17 @@ import (
 func LoadConfig() *spec.Config {
 	// Open the file
 	file, err := os.Open(ContextPath + "conf.yaml")
+	if os.IsNotExist(err) {
+		defaultConfig := []byte("appVersion: v1\ncurrent-server: \"\"\ncurrent-profile: \"\"\nservers: []\nprofiles: []")
+		if err := os.WriteFile(ContextPath+"conf.yaml", defaultConfig, 0644); err != nil {
+			log.Fatal("failed to create default config file: %w", err)
+		}
+		file, err = os.Open(ContextPath + "conf.yaml")
+	}
 	if err != nil {
 		log.Fatal("failed to open config file: %w", err)
 	}
+
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
