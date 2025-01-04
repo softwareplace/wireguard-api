@@ -17,22 +17,16 @@ COPY . .
 RUN go build -o wireguard-api cmd/server/main.go
 RUN go build -o api-key-generator cmd/generator/api_secret/main.go
 
-# Start with a minimal image
 FROM alpine:latest
 
 # Install necessary dependencies
 RUN apk --no-cache add ca-certificates
 
-ARG PORT
-
-ENV PORT=$PORT
+RUN mkdir -p /output
 
 # Copy the built app from the builder stage
 COPY --from=builder /app/wireguard-api /bin/wireguard-api
 COPY --from=builder /app/api-key-generator /bin/api-key-generator
+COPY --from=builder /app/scripts/docker/compiler/build /bin/build
 
-# Expose the port the app will run on
-EXPOSE $PORT
-
-# Command to run the app
-CMD ["/bin/wireguard-api"]
+CMD ["sh", "/bin/build"]

@@ -11,6 +11,7 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/domain/repository/api_secret"
 	"github.com/softwareplace/wireguard-api/pkg/domain/service/security"
 	"github.com/softwareplace/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 	"log"
 	"os"
 	"time"
@@ -25,10 +26,19 @@ func main() {
 		log.Println("  --client <value>	Client information for which the public key is generated (required)")
 		log.Println("  --exp <value>	   Expiration time of the generated key in hours (must be a positive integer, required)")
 		log.Println("Example:")
-		log.Printf("  %s --client=\"exampleClient\" --exp=24\n", os.Args[0])
+		log.Printf("  %s --client \"exampleClient\" --exp 24\n", os.Args[0])
 	}
 
-	if secretKey := os.Getenv("API_SECRET_KEY"); secretKey != "" {
+	// Check for --help flag and display usage if present
+	for _, arg := range os.Args {
+		if arg == "--help" {
+			flag.Usage()
+			os.Exit(0)
+		}
+	}
+
+	appEnv := env.AppEnv()
+	if secretKey := appEnv.ApiSecretKey; secretKey != "" {
 		// Define flags for the script
 		clientInfo := flag.String("client", "", "Client information for which the public key is generated")
 		expirationHours := flag.Int("exp", 0, "Expiration time of the generated key (in hours)")

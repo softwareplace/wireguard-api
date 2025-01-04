@@ -1,0 +1,26 @@
+[Unit]
+Description=WireGuard API Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+Environment=API_SECRET_AUTHORIZATION=O6hevRia8B9D3lpzSyzNZe4g
+Environment=API_SECRET_KEY=/home/eliasmeireles/workspace/personal/utils/wireguard-api/dev/secret/private.key
+Environment=MONGO_DATABASE=private_network
+Environment=MONGO_PASSWORD=cCNdBLDcjA8ojoovY4VdBkhduU
+Environment=MONGO_URI=mongodb://localhost:27017
+Environment=MONGO_USERNAME=wireguardUserl9Yrk0K2Eq
+Environment=PEERS_RESOURCE_PATH=/home/eliasmeireles/workspace/personal/utils/wire-guard-vpn-request-namager/.temp/wireguard/
+Environment=PORT=1080
+ExecStart=/home/eliasmeireles/workspace/personal/utils/wireguard-api/wireguard-api
+Restart=always
+RestartSec=5
+
+# Log to a specific file
+StandardOutput=append:/var/log/wireguard-api.log
+StandardError=append:/var/log/wireguard-api.log
+
+[Install]
+WantedBy=multi-user.target

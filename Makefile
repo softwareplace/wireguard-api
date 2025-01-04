@@ -2,7 +2,7 @@
 DOCKER_COMPOSE = docker-compose
 
 # Targets
-.PHONY: up down build rebuild logs clean help
+.PHONY: up down build rebuild logs clean compile help
 
 # Start all services in detached mode
 up:
@@ -47,3 +47,8 @@ help:
 	@echo "  make logs     - View logs in real-time"
 	@echo "  make clean    - Remove unused volumes, images, and networks"
 	@echo "  make help     - Show this help message"
+
+compile:
+	@docker build -t wireguard-api-compiler -f DockerfileBuild .
+	@docker run --rm -v $(PWD)/.temp:/output wireguard-api-compiler
+
