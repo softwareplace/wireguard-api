@@ -10,8 +10,9 @@ import (
 
 func usage() {
 	log.Printf("\nUsage of %s:\n", os.Args[0])
-	log.Println("--profile")
-	log.Println("--server")
+	log.Println("--profile - Manage profiles")
+	log.Println("--server - Manage servers")
+	log.Println("--connect - Connect to the current server")
 	log.Println("--help")
 }
 

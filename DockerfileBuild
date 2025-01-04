@@ -16,6 +16,7 @@ COPY . .
 # Build the Go app
 RUN go build -o wireguard-api cmd/server/main.go
 RUN go build -o api-key-generator cmd/generator/api_secret/main.go
+RUN go build -o wireguard-tools cmd/cli/main.go
 
 FROM alpine:latest
 
@@ -27,6 +28,7 @@ RUN mkdir -p /output
 # Copy the built app from the builder stage
 COPY --from=builder /app/wireguard-api /bin/wireguard-api
 COPY --from=builder /app/api-key-generator /bin/api-key-generator
+COPY --from=builder /app/wireguard-tools /bin/wireguard-tools
 COPY --from=builder /app/scripts/docker/compiler/build /bin/build
 
 CMD ["sh", "/bin/build"]
