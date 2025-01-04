@@ -2,9 +2,9 @@ package user
 
 import (
 	"encoding/json"
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers/request"
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers/shared"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 	"net/http"
 )
 

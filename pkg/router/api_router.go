@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/auth"
+	"github.com/softwareplace/wireguard-api/pkg/auth"
 	"net/http"
 )
 

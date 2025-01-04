@@ -2,7 +2,7 @@ package request
 
 import (
 	"context"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 	"net/http"
 )
 

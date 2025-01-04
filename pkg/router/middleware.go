@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"log"
 	"net/http"
 	"time"

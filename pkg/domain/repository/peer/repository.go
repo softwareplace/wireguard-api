@@ -1,6 +1,6 @@
 package peer
 
-import "github.com/eliasmeireles/wireguard-api/pkg/models"
+import "github.com/softwareplace/wireguard-api/pkg/models"
 
 type Repository interface {
 	SaveAll(peers []models.Peer) error

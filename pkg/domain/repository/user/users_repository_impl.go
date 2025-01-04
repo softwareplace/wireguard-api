@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 	"fmt"
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/db"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
-	"github.com/eliasmeireles/wireguard-api/pkg/utils/date"
+	"github.com/softwareplace/wireguard-api/pkg/domain/db"
+	"github.com/softwareplace/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/utils/date"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
 )

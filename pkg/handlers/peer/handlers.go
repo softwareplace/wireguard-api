@@ -1,8 +1,8 @@
 package peer
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/service/peer"
-	"github.com/eliasmeireles/wireguard-api/pkg/router"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/peer"
+	"github.com/softwareplace/wireguard-api/pkg/router"
 	"net/http"
 )
 

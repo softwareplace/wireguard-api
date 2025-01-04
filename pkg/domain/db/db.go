@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"github.com/eliasmeireles/wireguard-api/pkg/utils/env"
+	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"

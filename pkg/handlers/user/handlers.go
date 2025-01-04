@@ -1,9 +1,9 @@
 package user
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/repository/user"
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/service/security"
-	"github.com/eliasmeireles/wireguard-api/pkg/router"
+	"github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/security"
+	"github.com/softwareplace/wireguard-api/pkg/router"
 	"net/http"
 )
 

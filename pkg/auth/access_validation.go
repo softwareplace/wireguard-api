@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/repository/user"
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/service/security"
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers/request"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/security"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 	"log"
 	"net/http"
 	"sync"

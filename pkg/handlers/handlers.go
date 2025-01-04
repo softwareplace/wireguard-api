@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers/peer"
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers/user"
-	"github.com/eliasmeireles/wireguard-api/pkg/router"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/peer"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/user"
+	"github.com/softwareplace/wireguard-api/pkg/router"
 )
 
 func Init(api router.ApiRouterHandler) {

@@ -2,9 +2,9 @@ package peer
 
 import (
 	"encoding/base64"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
-	envUtils "github.com/eliasmeireles/wireguard-api/pkg/utils/env"
-	fileUtils "github.com/eliasmeireles/wireguard-api/pkg/utils/file"
+	"github.com/softwareplace/wireguard-api/pkg/models"
+	envUtils "github.com/softwareplace/wireguard-api/pkg/utils/env"
+	fileUtils "github.com/softwareplace/wireguard-api/pkg/utils/file"
 	"log"
 	"os"
 	"path/filepath"

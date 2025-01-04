@@ -2,8 +2,8 @@ package user
 
 import (
 	"fmt"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
 	"github.com/google/uuid"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 	"golang.org/x/crypto/bcrypt"
 	"regexp"
 	"strings"

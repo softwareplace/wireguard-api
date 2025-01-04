@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/db"
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/service/peer"
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers"
-	"github.com/eliasmeireles/wireguard-api/pkg/router"
+	"github.com/softwareplace/wireguard-api/pkg/domain/db"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/peer"
+	"github.com/softwareplace/wireguard-api/pkg/handlers"
+	"github.com/softwareplace/wireguard-api/pkg/router"
 )
 
 func main() {

@@ -3,8 +3,8 @@ package user
 import (
 	"encoding/json"
 	"errors"
-	"github.com/eliasmeireles/wireguard-api/pkg/handlers/shared"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 )

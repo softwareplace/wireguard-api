@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 )
 
 type UsersRepository interface {

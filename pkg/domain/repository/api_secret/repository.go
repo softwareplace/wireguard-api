@@ -1,7 +1,7 @@
 package api_secret
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 )
 
 type ApiSecretRepository interface {

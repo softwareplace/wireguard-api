@@ -1,8 +1,8 @@
 package peer
 
 import (
-	"github.com/eliasmeireles/wireguard-api/pkg/domain/repository/peer"
-	"github.com/eliasmeireles/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/domain/repository/peer"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 )
 
 type Service interface {
