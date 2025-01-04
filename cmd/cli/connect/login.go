@@ -50,8 +50,6 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 		log.Fatalf("Failed to marshal request body: %v", err)
 	}
 
-	log.Printf("Logging in as %s", profile.Name)
-
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/login", server.Host), bytes.NewBuffer(body))
 	if err != nil {
 		log.Fatalf("Failed to create POST request: %v", err)
