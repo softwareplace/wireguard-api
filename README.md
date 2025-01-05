@@ -55,7 +55,7 @@ MONGO_URI=mongodb://localhost:27017
 ## Startup app with docker
 
 - **Note**: The following commands assume you have Docker installed on your machine and use the `./dev/.env` file that
-  is not recommended for production.
+  is not recommended for **production**.
 
 ```shell
 make rebuild
@@ -63,8 +63,7 @@ make rebuild
 
 ## Startup app with a custom `.env` file
 
-- check the [`./dev/.env`](./dev/.env) file for the environment variables
--
+- Check the [`./dev/.env`](./dev/.env) file for the environment variables
 
 ```shell
 make rebuild ENV=<< .env file path >>
