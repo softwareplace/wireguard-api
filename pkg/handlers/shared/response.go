@@ -7,7 +7,6 @@ import (
 )
 
 func MakeErrorResponse(w http.ResponseWriter, message string, status int) {
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(map[string]interface{}{
 		"error":       message,
@@ -17,7 +16,6 @@ func MakeErrorResponse(w http.ResponseWriter, message string, status int) {
 }
 
 func MakeResponse(w http.ResponseWriter, body map[string]interface{}, status int) {
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(body)
 }

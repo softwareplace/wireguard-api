@@ -50,7 +50,7 @@ func (h *handlerImpl) Login(w http.ResponseWriter, r *http.Request) {
 		shared.MakeErrorResponse(w, "Error generating token", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
+
 	err = json.NewEncoder(w).Encode(tokenData)
 	if err != nil {
 		shared.MakeErrorResponse(w, "Internal Server Error", http.StatusInternalServerError)

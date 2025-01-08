@@ -32,7 +32,7 @@ func Build(w http.ResponseWriter, r *http.Request) ApiRequestContext {
 		Writer:  w,
 		Request: r,
 	}
-
+	w.Header().Set("Content-Type", "application/json")
 	ctx.GetAccessContext()
 	return ctx
 }
