@@ -29,6 +29,7 @@ func (h *handlerImpl) ApiSecurityService() security.ApiSecurityService {
 func Init(api router.ApiRouterHandler) {
 	handler := handlerImpl{}
 	api.PublicRouter(handler.Login, "login", "POST")
-	api.PublicRouter(handler.CreateUser, "user", "POST")
+	api.Post(handler.CreateUser, "user", "POST", "resource:users:create:user")
+	api.Put(handler.UpdateUser, "user/:id", "resource:users:update:user")
 	api.Put(handler.UpdateUser, "user")
 }

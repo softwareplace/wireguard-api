@@ -5,6 +5,7 @@ mkdir -p /output
 cp /bin/wireguard-api /output/wireguard-api
 cp  /bin/api-key-generator  /output/api-key-generator
 cp /bin/wireguard-tools /output/wireguard-tools
+cp /bin/wireguard-stream /output/wireguard-stream
 
 /output/api-key-generator --help
 /output/wireguard-tools --help

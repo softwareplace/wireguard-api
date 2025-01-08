@@ -16,7 +16,7 @@ import (
 func (a *apiSecurityServiceImpl) Validation(
 	ctx *request.ApiRequestContext,
 	next func(requestContext *request.ApiRequestContext,
-	) (*models.User, bool)) (*models.User, bool) {
+) (*models.User, bool)) (*models.User, bool) {
 	success := a.ExtractJWTClaims(ctx)
 
 	if !success {
@@ -97,11 +97,18 @@ func (a *apiSecurityServiceImpl) GenerateJWT(user models.User) (map[string]strin
 	expiration := time.Now().Add(duration).Unix()
 	requestBy, err := a.Encrypt(user.Salt)
 
-	scope, err := a.Encrypt(user.Role)
+	var encryptedRoles []string
+	for _, role := range user.Roles {
+		encryptedRole, err := a.Encrypt(role)
+		if err != nil {
+			return nil, err
+		}
+		encryptedRoles = append(encryptedRoles, encryptedRole)
+	}
 
 	claims := jwt.MapClaims{
 		"request": requestBy,
-		"scope":   scope,
+		"scope":   encryptedRoles,
 		"exp":     expiration,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

@@ -1,30 +1,28 @@
-package user
+package validator
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"golang.org/x/crypto/bcrypt"
 	"regexp"
-	"strings"
 )
 
-func checkPassword(inputPassword, storedPassword, salt string) bool {
+func CheckPassword(inputPassword, storedPassword, salt string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(inputPassword+salt))
 	return err == nil
 }
 
-func validateUserFields(user models.User) error {
-	if user.Username == "" || user.Password == "" || user.Email == "" || user.Role == "" {
-		return fmt.Errorf("All fields (username, password, email, role) are required")
+func ValidateUserFields(user models.User) error {
+	if user.Username == "" || user.Password == "" || user.Email == "" || len(user.Roles) == 0 {
+		return fmt.Errorf("all fields (username, password, email, roles) are required")
 	}
 
 	if !isValidEmail(user.Email) {
-		return fmt.Errorf("Invalid email format")
+		return fmt.Errorf("invalid email format")
 	}
 
 	if !isValidPassword(user.Password) {
-		return fmt.Errorf("Password must be at least 8 characters, include uppercase, lowercase, number, and special character")
+		return fmt.Errorf("password must be at least 8 characters, include uppercase, lowercase, number, and special character")
 	}
 
 	return nil
@@ -44,17 +42,4 @@ func isValidPassword(password string) bool {
 
 	return regexp.MustCompile(passwordRegex).MatchString(password) &&
 		hasUppercase && hasLowercase && hasDigit && hasSpecial
-}
-
-func hashPassword(password string) (string, string, error) {
-	salt := generateSalt()
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password+salt), bcrypt.DefaultCost)
-	if err != nil {
-		return "", "", err
-	}
-	return string(hashedPassword), salt, nil
-}
-
-func generateSalt() string {
-	return strings.ReplaceAll(uuid.New().String(), "-", "")
 }

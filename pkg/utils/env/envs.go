@@ -16,7 +16,8 @@ type ApplicationEnv struct {
 	// ApiSecretKey is the key used for API security.
 	ApiSecretKey string
 	// DBEnv holds the database environment configuration.
-	DBEnv DBEnv
+	DBEnv        DBEnv
+	InitFilePath string
 }
 
 type DBEnv struct {
@@ -47,6 +48,7 @@ func AppEnv() ApplicationEnv {
 			ContextPath:            getServerContextPath(),
 			PeerResourcePath:       getPeerResourcePath(),
 			ApiSecretKey:           os.Getenv("API_SECRET_KEY"),
+			InitFilePath:           os.Getenv("API_INIT_FILE"),
 			DBEnv:                  dbEnv,
 		}
 	}

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
+	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
 	"net/http"
 )
 
@@ -15,7 +17,7 @@ func (h *handlerImpl) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := validateUserFields(user); err != nil {
+	if err := validator.ValidateUserFields(user); err != nil {
 		shared.MakeErrorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -27,7 +29,7 @@ func (h *handlerImpl) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hashedPassword, salt, err := hashPassword(user.Password)
+	hashedPassword, salt, err := sec.HashPassword(user.Password)
 
 	if err != nil {
 		shared.MakeErrorResponse(w, "Error encrypting password", http.StatusInternalServerError)

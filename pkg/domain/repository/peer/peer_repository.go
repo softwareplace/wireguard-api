@@ -3,7 +3,6 @@ package peer
 import (
 	"context"
 	"errors"
-	"github.com/softwareplace/wireguard-api/pkg/domain/db"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/date"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +12,7 @@ import (
 )
 
 func (r *repositoryImpl) SaveAll(peers []models.Peer) error {
-	database := db.GetDB().Collection("peers")
+	database := r.collection()
 
 	for _, peer := range peers {
 		filter := bson.M{"fileName": peer.FileName}
@@ -48,7 +47,7 @@ func (r *repositoryImpl) SaveAll(peers []models.Peer) error {
 }
 
 func (r *repositoryImpl) Save(peer models.Peer) error {
-	database := db.GetDB().Collection("peers")
+	database := r.collection()
 	nowToString := date.NowToString()
 	peer.UpdatedAt = nowToString
 	peer.CreatedAt = nowToString
@@ -63,7 +62,7 @@ func (r *repositoryImpl) Save(peer models.Peer) error {
 }
 
 func (r *repositoryImpl) GetAvailablePeer() (*models.Peer, error) {
-	database := db.GetDB().Collection("peers")
+	database := r.collection()
 
 	var peer models.Peer
 	err := database.FindOne(context.Background(), bson.M{}).Decode(&peer)

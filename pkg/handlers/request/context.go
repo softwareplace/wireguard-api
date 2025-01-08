@@ -2,6 +2,7 @@ package request
 
 import (
 	"context"
+	"fmt"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"net/http"
 )
@@ -34,6 +35,14 @@ func Build(w http.ResponseWriter, r *http.Request) ApiRequestContext {
 
 	ctx.GetAccessContext()
 	return ctx
+}
+
+func (ctx *ApiRequestContext) GetRoles() (roles []string, err error) {
+	user := ctx.GetAccessContext().User
+	if user != nil && len(user.Roles) > 0 {
+		return user.Roles, nil
+	}
+	return nil, fmt.Errorf("user roles not found")
 }
 
 func (ctx *ApiRequestContext) GetAccessContext() *AccessContext {

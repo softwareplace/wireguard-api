@@ -3,11 +3,11 @@ current-server: development
 current-profile: eliasmeireles
 servers:
   - name: development
-    host: http://localhost:8080/api/private-network/v1
+    host: http://localhost:1080/api/private-network/v1/
     apiKey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnQiOiJTb2Z0d2FyZSBQbGFjZSBDTyIsImV4cCI6MjA1MTYwMzA2Mywia2V5IjoibDNWcEovQmY1eTZhcVRpZGxZUy9meTZoY2lObTNqRzdvQWxHS2kzZVU5NkNWeHZITFVpeDl3PT0ifQ.2YJ3aBYT_3SgqTqhEyNJwK6iglCYCHvPRbCWc4MKzp0
     description: Development server
 profiles:
   - name: eliasmeireles
     description: Development server
-    authorization-id: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYzNDY4NDEsInJlcXVlc3QiOiJkUkpDcENtY1RST2JpRmdKVHl0dVpIdjJFZnRkaDd2aGdzdzNhb0xwNTJQblVvWWZhTm9rdytHRUltLzdWRFZKIiwic2NvcGUiOiJhRXMyUVk4UW1HaWRUVVh6cGlEY1IzaVJ5dk9xIn0.chRBSwLtJ5dm9-z6ZHIZdl6pb-43jUnLcqlYwBBlHtM
-    expires: "1736346841"
+    authorization-id: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYzNTUxNjMsInJlcXVlc3QiOiJrRG5ud2wzd3hteHNiRXo5eFpwT1RTNWUxTmFCakluaC9VUEdlWHpJWUZSVlBKRG11OXBRdW1ENHBXZTlrWll4Iiwic2NvcGUiOiI5WkVrVkJhdXNSemZFTUlMTWsxV3JDOXM3dXhCVkY3aVNYZk8wMWpRY1E9PSJ9.dDheBDMI1q6z35xzO_Zx_oFSprOFrul6kfV9wvS_spw
+    expires: "1736355163"

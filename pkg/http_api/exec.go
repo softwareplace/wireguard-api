@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func (i *_impl[T]) build(method string, config *ApiConfig) (*http.Request, error) {
@@ -20,7 +21,9 @@ func (i *_impl[T]) build(method string, config *ApiConfig) (*http.Request, error
 		body = bytes.NewBuffer(jsonBody)
 	}
 
-	req, err := http.NewRequest(method, config.Host+config.Path, body)
+	requestHost := strings.Trim(config.Host, "/")
+	requestPath := strings.TrimPrefix(config.Path, "/")
+	req, err := http.NewRequest(method, requestHost+"/"+requestPath, body)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to create POST request: %v", err)

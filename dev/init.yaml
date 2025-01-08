@@ -1,0 +1,11 @@
+user:
+  username: my-username
+  email: user@email.com
+  password: ynT9558iiMga&ayTVGs3Gc6ug1
+  status: ACTIVE
+  roles:
+    - "resource:peers:get:peer"
+    - "resource:api-secret:generate"
+    - "resource:users:update:user"
+    - "resource:users:create:user"
+

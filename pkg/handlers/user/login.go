@@ -6,6 +6,7 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
+	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"net/http"
@@ -38,7 +39,7 @@ func (h *handlerImpl) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !checkPassword(userInput.Password, userResponse.Password, userResponse.Salt) {
+	if !validator.CheckPassword(userInput.Password, userResponse.Password, userResponse.Salt) {
 		shared.MakeErrorResponse(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}

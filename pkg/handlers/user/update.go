@@ -5,6 +5,7 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/models"
+	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"net/http"
 )
 
@@ -26,15 +27,9 @@ func (h *handlerImpl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate each field; if empty, use the current value from the database
-
-	if updatedUser.Role == "" {
-		updatedUser.Role = currentUser.Role
-	}
-
 	// If a new password is provided, hash it and generate a new salt
 	if updatedUser.Password != "" {
-		pass, salt, err := hashPassword(updatedUser.Password)
+		pass, salt, err := sec.HashPassword(updatedUser.Password)
 		currentUser.Password = pass
 		currentUser.Salt = salt
 		if err != nil {
@@ -42,9 +37,6 @@ func (h *handlerImpl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	// Update user fields with the new data
-	currentUser.Role = updatedUser.Role
 
 	// Save updated user to database
 	err = h.UsersRepository().Update(*currentUser)

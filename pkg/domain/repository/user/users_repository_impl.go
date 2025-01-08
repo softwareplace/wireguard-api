@@ -3,15 +3,14 @@ package user
 import (
 	"context"
 	"fmt"
-	"github.com/softwareplace/wireguard-api/pkg/domain/db"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/date"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
 )
 
-func (impl *usersRepositoryImpl) Save(user models.User) error {
-	collection := db.GetDB().Collection("users")
+func (r *usersRepositoryImpl) Save(user models.User) error {
+	collection := r.collection()
 
 	nowToString := date.NowToString()
 	user.CreatedAt = nowToString
@@ -21,8 +20,8 @@ func (impl *usersRepositoryImpl) Save(user models.User) error {
 	return err
 }
 
-func (impl *usersRepositoryImpl) Update(user models.User) error {
-	collection := db.GetDB().Collection("users")
+func (r *usersRepositoryImpl) Update(user models.User) error {
+	collection := r.collection()
 	user.UpdatedAt = date.NowToString()
 
 	filter := bson.M{"_id": user.Id}
@@ -31,8 +30,8 @@ func (impl *usersRepositoryImpl) Update(user models.User) error {
 	return err
 }
 
-func (impl *usersRepositoryImpl) FindUserBySalt(salt string) (*models.User, error) {
-	collection := db.GetDB().Collection("users")
+func (r *usersRepositoryImpl) FindUserBySalt(salt string) (*models.User, error) {
+	collection := r.collection()
 	var currentUser models.User
 
 	err := collection.FindOne(context.Background(), map[string]interface{}{
@@ -46,8 +45,8 @@ func (impl *usersRepositoryImpl) FindUserBySalt(salt string) (*models.User, erro
 	return &currentUser, nil
 }
 
-func (impl *usersRepositoryImpl) FindUserByEmail(email string) (*models.User, error) {
-	collection := db.GetDB().Collection("users")
+func (r *usersRepositoryImpl) FindUserByEmail(email string) (*models.User, error) {
+	collection := r.collection()
 	var user models.User
 	err := collection.FindOne(context.Background(), map[string]interface{}{
 		"email": email,
@@ -58,8 +57,8 @@ func (impl *usersRepositoryImpl) FindUserByEmail(email string) (*models.User, er
 	return &user, nil
 }
 
-func (impl *usersRepositoryImpl) FindUserByUsername(username string) (*models.User, error) {
-	collection := db.GetDB().Collection("users")
+func (r *usersRepositoryImpl) FindUserByUsername(username string) (*models.User, error) {
+	collection := r.collection()
 	var user models.User
 	err := collection.FindOne(context.Background(), map[string]interface{}{
 		"username": username,
@@ -70,14 +69,14 @@ func (impl *usersRepositoryImpl) FindUserByUsername(username string) (*models.Us
 	return &user, nil
 }
 
-func (impl *usersRepositoryImpl) FindUserByUsernameOrEmail(username string, email string) (*models.User, error) {
+func (r *usersRepositoryImpl) FindUserByUsernameOrEmail(username string, email string) (*models.User, error) {
 	if username != "" {
-		return impl.FindUserByUsername(username)
+		return r.FindUserByUsername(username)
 
 	}
 
 	if email != "" {
-		return impl.FindUserByEmail(email)
+		return r.FindUserByEmail(email)
 	}
 
 	return nil, fmt.Errorf("username or email must be provided")
