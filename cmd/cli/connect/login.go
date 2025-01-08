@@ -71,7 +71,7 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 		"password": password,
 	}
 
-	api := http_api.NewApi[LoginResponse](LoginResponse{})
+	api := http_api.NewApi(LoginResponse{})
 
 	config := http_api.Config(server.Host).
 		WithPath("/login").

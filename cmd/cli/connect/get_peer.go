@@ -10,7 +10,7 @@ import (
 )
 
 func GetPeer(profile *spec.Profile, server *spec.Server) models.Peer {
-	api := http_api.NewApi[models.Peer](models.Peer{})
+	api := http_api.NewApi(models.Peer{})
 
 	apiConfig := http_api.Config(server.Host).
 		WithPath("/peers").
