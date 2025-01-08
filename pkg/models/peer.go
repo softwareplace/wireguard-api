@@ -28,3 +28,15 @@ type Peer struct {
 	CreatedAt     string             `json:"created_at"`
 	UpdatedAt     string             `json:"updated_at"`
 }
+
+type PeerResponse struct {
+	PeerData string `json:"peerData"`
+	FileName string `json:"fileName"`
+}
+
+func (p *Peer) ToResponse() *PeerResponse {
+	return &PeerResponse{
+		PeerData: p.PeerData,
+		FileName: p.FileName,
+	}
+}

@@ -8,7 +8,7 @@ import (
 type Service interface {
 	repository() peer.Repository
 	Load()
-	GetAvailablePeer() (response *models.Peer, error error, notfound bool)
+	GetAvailablePeer() (response *models.PeerResponse, error error, notfound bool)
 }
 
 type serviceImpl struct {

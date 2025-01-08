@@ -2,7 +2,7 @@ package peer
 
 import "github.com/softwareplace/wireguard-api/pkg/models"
 
-func (s *serviceImpl) GetAvailablePeer() (response *models.Peer, error error, notfound bool) {
+func (s *serviceImpl) GetAvailablePeer() (response *models.PeerResponse, error error, notfound bool) {
 	peer, err := s.repository().GetAvailablePeer()
 
 	if err != nil {
@@ -11,5 +11,5 @@ func (s *serviceImpl) GetAvailablePeer() (response *models.Peer, error error, no
 		}
 		return nil, err, false
 	}
-	return peer, nil, false
+	return peer.ToResponse(), nil, false
 }

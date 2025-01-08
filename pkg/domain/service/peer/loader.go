@@ -15,7 +15,7 @@ func (s *serviceImpl) Load() {
 	peerResourcePath := envUtils.AppEnv().PeerResourcePath
 
 	// Define the pattern for matching file names
-	pattern := regexp.MustCompile(`.*peer.*\.conf.yaml`)
+	pattern := regexp.MustCompile(`.*peer.*\.conf`)
 
 	// List all matching files
 	files, err := fileUtils.LoadMatchingFiles(peerResourcePath, pattern)
