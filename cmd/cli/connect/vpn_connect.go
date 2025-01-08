@@ -23,7 +23,7 @@ func Run(args *shared.Args) {
 
 	userAuthenticate(args, profile, config, server)
 
-	peer := GetPeer(args, profile, config, server)
+	peer := GetPeer(profile, server)
 
 	if peer.FileName != "" && peer.PeerData != "" {
 		// Decode peer.PeerData from base64

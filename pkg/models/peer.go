@@ -11,10 +11,20 @@ type UsedPeer struct {
 
 // Peer represents all WireGuard peer data in the system
 type Peer struct {
-	Id        primitive.ObjectID `bson:"_id,omitempty"`
-	PeerData  string             `json:"peerData"`
-	FileName  string             `json:"fileName"`
-	Status    string             `json:"status"` // INACTIVE, AVAILABLE, IN_USE
-	CreatedAt string             `json:"created_at"`
-	UpdatedAt string             `json:"updated_at"`
+	Id            primitive.ObjectID `bson:"_id,omitempty"`
+	PeerData      string             `json:"peerData"`
+	FileName      string             `json:"fileName"`
+	Status        string             `json:"status"`
+	Interface     string             `json:"interface"`
+	PublicKey     string             `json:"publicKey"`
+	PrivateKey    string             `json:"privateKey"`
+	Port          string             `json:"port"`
+	Endpoint      string             `json:"endpoint"`
+	TransferRx    string             `json:"transferRx"`
+	TransferTx    string             `json:"transferTx"`
+	LastHandshake string             `json:"lastHandshake"`
+	AllowedIPs    string             `json:"allowedIps"`
+	Flags         string             `json:"flags"`
+	CreatedAt     string             `json:"created_at"`
+	UpdatedAt     string             `json:"updated_at"`
 }

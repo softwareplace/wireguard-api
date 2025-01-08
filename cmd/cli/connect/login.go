@@ -1,15 +1,13 @@
 package connect
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
 	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/wireguard-api/pkg/http_api"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"golang.org/x/crypto/ssh/terminal"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -52,7 +50,7 @@ func getPassword(args *shared.Args) string {
 	}
 
 	fmt.Print("Enter password for quest new authorization key: ")
-	passwordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
+	passwordBytes, err := terminal.ReadPassword(syscall.Stdin)
 	if err != nil {
 		log.Fatalf("Failed to read password: %v", err)
 	}
@@ -72,43 +70,21 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 		"username": profile.Name,
 		"password": password,
 	}
-	body, err := json.Marshal(reqBody)
+
+	api := http_api.NewApi[LoginResponse](LoginResponse{})
+
+	config := http_api.Config(server.Host).
+		WithPath("/login").
+		WithBody(reqBody).
+		WithHeader(request.XApiKey, server.ApiKey).
+		WithExpectedStatusCode(http.StatusOK)
+
+	loginResp, err := api.Post(config)
+
 	if err != nil {
-		log.Fatalf("Failed to marshal request body: %v", err)
-	}
-
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/login", server.Host), bytes.NewBuffer(body))
-	if err != nil {
-		log.Fatalf("Failed to create POST request: %v", err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set(request.XApiKey, server.ApiKey)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("Failed to make POST request: %v", err)
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatalf("Failed to close response body: %v", err)
-		}
-	}(resp.Body)
-
-	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Unexpected status code: %d", resp.StatusCode)
-	}
-
-	// Parse the response body to the LoginResponse structure.
-	var loginResp LoginResponse
-	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&loginResp); err != nil {
-		log.Fatalf("Failed to decode response: %v", err)
+		log.Fatalf("Failed to login: %v", err)
 	}
 
 	profile.AuthorizationKey = loginResp.AccessToken
 	profile.Expires = loginResp.Expires
-
 }
