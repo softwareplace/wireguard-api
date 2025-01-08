@@ -9,6 +9,7 @@ type Service interface {
 	repository() peer.Repository
 	Load()
 	GetAvailablePeer() (response *models.PeerResponse, error error, notfound bool)
+	Stream([]models.Peer) error
 }
 
 type serviceImpl struct {

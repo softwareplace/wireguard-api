@@ -8,4 +8,5 @@ user:
     - "resource:api-secret:generate"
     - "resource:users:update:user"
     - "resource:users:create:user"
+    - "resource:peers:stream:peers"
 

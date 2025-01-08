@@ -34,12 +34,23 @@ func (s *serviceImpl) Load() {
 			return
 		}
 
+		// Define variables to hold extracted data
+		var publicKey string
+
+		publicKeyRegex := regexp.MustCompile(`(?m)^PublicKey\s*=\s*(\S+)$`)
+
+		if match := publicKeyRegex.FindStringSubmatch(string(content)); match != nil {
+			publicKey = match[1]
+		}
+
 		encodedContent := base64.StdEncoding.EncodeToString(content)
 		peerConfig := models.Peer{
-			PeerData: encodedContent,
-			FileName: filepath.Base(file),
-			Status:   "AVAILABLE",
+			PeerData:  encodedContent,
+			FileName:  filepath.Base(file),
+			Status:    "AVAILABLE",
+			PublicKey: publicKey,
 		}
+
 		peerConfigs = append(peerConfigs, peerConfig)
 	}
 

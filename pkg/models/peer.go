@@ -15,18 +15,17 @@ type Peer struct {
 	PeerData      string             `json:"peerData"`
 	FileName      string             `json:"fileName"`
 	Status        string             `json:"status"`
-	Interface     string             `json:"interface"`
-	PublicKey     string             `json:"publicKey"`
-	PrivateKey    string             `json:"privateKey"`
-	Port          string             `json:"port"`
-	Endpoint      string             `json:"endpoint"`
-	TransferRx    string             `json:"transferRx"`
-	TransferTx    string             `json:"transferTx"`
-	LastHandshake string             `json:"lastHandshake"`
-	AllowedIPs    string             `json:"allowedIps"`
-	Flags         string             `json:"flags"`
-	CreatedAt     string             `json:"created_at"`
-	UpdatedAt     string             `json:"updated_at"`
+	Interface     string             `json:"interface"`     // e.g., wg0
+	PublicKey     string             `json:"publicKey"`     // e.g., AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+	Port          string             `json:"port"`          // e.g., (none) or 51820
+	Endpoint      string             `json:"endpoint"`      // e.g., (none) or 10.10.0.2:51820
+	TransferRx    string             `json:"transferRx"`    // e.g., 0
+	TransferTx    string             `json:"transferTx"`    // e.g., 0
+	LastHandshake string             `json:"lastHandshake"` // e.g., (none) or a Unix timestamp
+	AllowedIPs    string             `json:"allowedIps"`    // Allowed IPs in CIDR notation (e.g., 10.10.0.x/32)
+	Flags         string             `json:"flags"`         // e.g., "off"
+	CreatedAt     string             `json:"createdAt"`
+	UpdatedAt     string             `json:"updatedAt"`
 }
 
 type PeerResponse struct {

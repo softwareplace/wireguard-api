@@ -7,23 +7,21 @@ import (
 )
 
 type StreamEnv struct {
-	ApiServer string
-	ApiSecret string
-	WgCommand string
-	Args      []string
+	ApiKey        string
+	Authorization string
+	Server        string
+	WgCommand     string
+	Args          []string
 }
 
 func New() *StreamEnv {
-	env := &StreamEnv{}
-	env.loadFromEnv()
-	return env
-}
-
-func (env *StreamEnv) loadFromEnv() {
-	env.ApiServer = getEnvOrFatal("API_SERVER")
-	env.ApiSecret = getEnvOrFatal("API_SECRET")
-	env.WgCommand = getEnvOrFatal("WG_COMMAND")
-	env.Args = strings.Split(getEnvOrFatal("WG_COMMAND_ARGS"), ",")
+	return &StreamEnv{
+		ApiKey:        getEnvOrFatal("WG_API_KEY"),
+		Authorization: getEnvOrFatal("WG_API_AUTHORIZATION"),
+		Server:        getEnvOrFatal("WG_API_SERVER"),
+		WgCommand:     getEnvOrFatal("WG_API_COMMAND"),
+		Args:          strings.Split(getEnvOrFatal("WG_API_COMMAND_ARGS"), ","),
+	}
 }
 
 func getEnvOrFatal(key string) string {

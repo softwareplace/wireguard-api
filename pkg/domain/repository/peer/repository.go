@@ -9,6 +9,8 @@ import (
 type Repository interface {
 	SaveAll(peers []models.Peer) error
 	Save(peer models.Peer) error
+	Update(peer models.Peer) error
+	FindByPublicKey(pubKey string) (*models.Peer, error)
 	GetAvailablePeer() (*models.Peer, error)
 }
 
