@@ -81,8 +81,7 @@ func (a *apiRouterHandlerImpl) Add(
 }
 
 func (a *apiRouterHandlerImpl) Get(
-	handler func(w http.ResponseWriter,
-	r *http.Request),
+	handler func(w http.ResponseWriter, r *http.Request),
 	path string,
 	requiredRoles ...string,
 ) {
@@ -90,8 +89,7 @@ func (a *apiRouterHandlerImpl) Get(
 }
 
 func (a *apiRouterHandlerImpl) Post(
-	handler func(w http.ResponseWriter,
-	r *http.Request),
+	handler func(w http.ResponseWriter, r *http.Request),
 	path string,
 	requiredRoles ...string,
 ) {
@@ -99,8 +97,7 @@ func (a *apiRouterHandlerImpl) Post(
 }
 
 func (a *apiRouterHandlerImpl) Put(
-	handler func(w http.ResponseWriter,
-	r *http.Request),
+	handler func(w http.ResponseWriter, r *http.Request),
 	path string,
 	requiredRoles ...string,
 ) {
@@ -108,8 +105,7 @@ func (a *apiRouterHandlerImpl) Put(
 }
 
 func (a *apiRouterHandlerImpl) Delete(
-	handler func(w http.ResponseWriter,
-	r *http.Request),
+	handler func(w http.ResponseWriter, r *http.Request),
 	path string,
 	requiredRoles ...string,
 ) {
@@ -132,8 +128,7 @@ func (a *apiRouterHandlerImpl) Options(
 }
 
 func (a *apiRouterHandlerImpl) Head(
-	handler func(w http.ResponseWriter,
-	r *http.Request),
+	handler func(w http.ResponseWriter, r *http.Request),
 	path string,
 	requiredRoles ...string,
 ) {

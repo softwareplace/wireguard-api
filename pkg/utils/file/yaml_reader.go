@@ -27,8 +27,6 @@ func FromYaml[T any](filePath string, outStruct T) (*T, error) {
 
 	// Parse the YAML data into the struct
 	decoder := yaml.NewDecoder(data)
-	//var user models.User
-	//err = decoder.Decode(&user)
 	err = decoder.Decode(&outStruct)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode YAML data: %w", err)
