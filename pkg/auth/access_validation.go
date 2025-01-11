@@ -22,12 +22,12 @@ func AccessValidation(next http.Handler) http.Handler {
 		ctx := request.Of(w, r)
 
 		if !matchFound {
-			_, success := apiSecurityService.Validation(ctx, _nextValidation)
+			_, success := apiSecurityService.Validation(&ctx, _nextValidation)
 			if !success {
 				return
 			}
 
-			if !hasResourceAccess(ctx) {
+			if !hasResourceAccess(&ctx) {
 				return
 			}
 		}

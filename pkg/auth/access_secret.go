@@ -37,7 +37,7 @@ func (a *apiSecurityHandlerImpl) Middleware(next http.Handler) http.Handler {
 		// Validate the public key
 		ctx := request.Of(w, r)
 
-		if err := a.ValidatePublicKey(ctx); err != nil {
+		if err := a.ValidatePublicKey(&ctx); err != nil {
 			ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
 			return
 		}

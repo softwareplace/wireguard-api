@@ -12,20 +12,27 @@ import (
 // rootAppMiddleware logs each incoming request's method, path, and remote address
 func rootAppMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now() // Record the start time
-		log.Printf("Incoming request: %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
+		var ctx request.ApiRequestContext
 
-		error_handler.Handler(
-			func() {
-				requestContext := request.Of(w, r)
-				requestContext.Next(next)
-			},
-			func(err any) {
-				onError(err, w)
-			})
+		error_handler.Handler(func() {
+			start := time.Now() // Record the start time
+			ctx = request.Of(w, r)
 
-		duration := time.Since(start)
-		log.Printf("request processed: %s %s in %v", r.Method, r.URL.Path, duration)
+			log.Printf("[%s]:: Incoming request: %s %s from %s", ctx.GetSessionId(), r.Method, r.URL.Path, r.RemoteAddr)
+
+			ctx.Next(next)
+
+			duration := time.Since(start)
+
+			var apiKeyId string
+			if ctx.AccessContext != nil && ctx.AccessContext.ApiKeyId != "" {
+				apiKeyId = ctx.AccessContext.ApiKeyId
+			}
+
+			log.Printf("[%s]:: => %s => request processed: %s %s in %v", ctx.GetSessionId(), apiKeyId, r.Method, r.URL.Path, duration)
+		}, func(err any) {
+			onError(err, w)
+		})
 	})
 }
 
