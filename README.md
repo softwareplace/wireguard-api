@@ -10,13 +10,14 @@ The application reads its configuration from the following environment variables
 
 ### General Configuration (`ApplicationEnv`)
 
-| Variable                   | Description                                          | Default Value              | Required? |
-|----------------------------|------------------------------------------------------|----------------------------|-----------|
-| `API_SECRET_AUTHORIZATION` | Secret used to encrypt and decrypt API token claims. | N/A                        | Yes       |
-| `PORT`                     | The port on which the application runs.              | `1080`                     | No        |
-| `CONTEXT_PATH`             | The base path used for API routing.                  | `/api/private-network/v1/` | No        |
-| `PEERS_RESOURCE_PATH`      | Filesystem path for peer resource connections.       | `/etc/wireguard/`          | No        |
-| `API_SECRET_KEY`           | The key used for API security.                       | N/A                        | Yes       |
+| Variable                   | Description                                                             | Default Value              | Required? |
+|----------------------------|-------------------------------------------------------------------------|----------------------------|-----------|
+| `API_SECRET_AUTHORIZATION` | Secret used to encrypt and decrypt API token claims.                    | N/A                        | Yes       |
+| `API_SECRET_KEY`           | The api private key used for API security.                              | N/A                        | Yes       |
+| `PORT`                     | The port on which the application runs.                                 | `1080`                     | No        |
+| `CONTEXT_PATH`             | The base path used for API routing.                                     | `/api/private-network/v1/` | No        |
+| `PEERS_RESOURCE_PATH`      | Filesystem path for peer resource connections.                          | `/etc/wireguard/`          | No        |
+| `API_INIT_FILE`            | Add the first user data that will be created at the application startup | N/A                        | No        |
 
 ### Database Configuration (`DBEnv`)
 
