@@ -1,6 +1,7 @@
 package request
 
 import (
+	"context"
 	"net/http"
 )
 
@@ -29,6 +30,9 @@ func Of(w http.ResponseWriter, r *http.Request) *ApiRequestContext {
 	}
 
 	ctx.AccessContext = ctx.GetAccessContext()
+	apiRequestContext := context.WithValue(ctx.Request.Context(), ctx, apiAccessContextKey)
+	ctx.Request = r.WithContext(apiRequestContext)
+
 	return &ctx
 }
 

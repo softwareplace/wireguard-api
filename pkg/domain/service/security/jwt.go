@@ -60,7 +60,7 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx *request.ApiRequestContext
 		return true
 	}
 
-	log.Printf("JWT/CLAIMS_EXTRACT: failed with error: %v", err)
+	log.Printf("JWT/CLAIMS_EXTRACT: failed with error_handler: %v", err)
 	ctx.Error("Authorization failed", http.StatusForbidden)
 	return false
 }

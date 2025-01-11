@@ -30,9 +30,9 @@ func (ctx *ApiRequestContext) BadRequest(message string) {
 func (ctx *ApiRequestContext) Error(message string, status int) {
 	ctx.Writer.WriteHeader(status)
 	responseBody := map[string]interface{}{
-		"error":      message,
-		"statusCode": status,
-		"timestamp":  time.Now().UnixMilli(),
+		"error_handler": message,
+		"statusCode":    status,
+		"timestamp":     time.Now().UnixMilli(),
 	}
 
 	ctx.Response(responseBody, status)

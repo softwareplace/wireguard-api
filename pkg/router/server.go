@@ -17,7 +17,7 @@ func (a *apiRouterHandlerImpl) StartServer() {
 	securityHandler := auth.NewApiSecurityHandler()
 	securityHandler.InitAPISecretKey()
 
-	apiRoute.Use(loggingMiddleware)
+	apiRoute.Use(rootAppMiddleware)
 	apiRoute.Use(securityHandler.Middleware)
 	apiRoute.Use(auth.AccessValidation)
 

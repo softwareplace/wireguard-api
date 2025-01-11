@@ -48,7 +48,7 @@ func WgDump(output string) ([]models.Peer, error) {
 			if err == nil {
 				dump.LastHandshake = time.Unix(timestamp, 0).Format("2006-01-02T15:04:05Z07:00")
 			} else {
-				log.Printf("error parsing LastHandshake as int: %v", err)
+				log.Printf("error_handler parsing LastHandshake as int: %v", err)
 			}
 		} else {
 			dump.LastHandshake = ""
