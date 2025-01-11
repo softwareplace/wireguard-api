@@ -16,9 +16,8 @@ import (
 
 var (
 	// apiSecret is expected to be an environment variable, adjust as needed
-	apiSecret             any // Replace with logic to fetch from environment variables or similar
-	mustValidatePublicKey = false
-	appEnv                = env.AppEnv()
+	apiSecret any // Replace with logic to fetch from environment variables or similar
+	appEnv    = env.AppEnv()
 )
 
 type ApiSecurityHandler interface {
@@ -51,45 +50,39 @@ func (a *apiSecurityHandlerImpl) Middleware(next http.Handler) http.Handler {
 // If apiSecret is provided, it ensures the private key from the specified path can be loaded.
 // The application will crash if the private key cannot be loaded.
 func (a *apiSecurityHandlerImpl) InitAPISecretKey() {
-	if secretKey := appEnv.ApiSecretKey; secretKey != "" {
-		// Load private key from the provided secretKey file path
-		privateKeyData, err := os.ReadFile(secretKey)
-		if err != nil {
-			log.Fatalf("Failed to read private key file: %s", err.Error())
-		}
+	secretKey := appEnv.ApiSecretKey
+	// Load private key from the provided secretKey file path
+	privateKeyData, err := os.ReadFile(secretKey)
+	if err != nil {
+		log.Fatalf("Failed to read private key file: %s", err.Error())
+	}
 
-		// Decode PEM block from the private key data
-		block, _ := pem.Decode(privateKeyData)
-		if block == nil || block.Type != "PRIVATE KEY" {
-			log.Fatalf("Failed to decode private key PEM block")
-		}
+	// Decode PEM block from the private key data
+	block, _ := pem.Decode(privateKeyData)
+	if block == nil || block.Type != "PRIVATE KEY" {
+		log.Fatalf("Failed to decode private key PEM block")
+	}
 
-		// Parse the private key using ParsePKCS8PrivateKey
-		privateKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
-		if err != nil {
-			log.Fatalf("Failed to parse private key: %s", err.Error())
-		}
-		apiSecret = privateKey
-		mustValidatePublicKey = true
+	// Parse the private key using ParsePKCS8PrivateKey
+	privateKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+	if err != nil {
+		log.Fatalf("Failed to parse private key: %s", err.Error())
+	}
+	apiSecret = privateKey
 
-		switch key := apiSecret.(type) {
-		case *ecdsa.PrivateKey:
-			log.Println("Loaded ECDSA private key successfully")
-		case *rsa.PrivateKey:
-			log.Println("Loaded RSA private key successfully")
-		default:
-			log.Fatalf("Unsupported private key type: %T", key)
-		}
+	switch key := apiSecret.(type) {
+	case *ecdsa.PrivateKey:
+		log.Println("Loaded ECDSA private key successfully")
+	case *rsa.PrivateKey:
+		log.Println("Loaded RSA private key successfully")
+	default:
+		log.Fatalf("Unsupported private key type: %T", key)
 	}
 }
 
 // ValidatePublicKey validates a given public key (in Base64 format) against the private key (apiSecret).
 // This is performed only if mustValidatePublicKey is true.
 func (a *apiSecurityHandlerImpl) ValidatePublicKey(ctx *request.ApiRequestContext) error {
-	if !mustValidatePublicKey {
-		return nil // No validation is required
-	}
-
 	// Decode the Base64-encoded public key
 	claims, err := apiSecurityService.JWTClaims(ctx)
 

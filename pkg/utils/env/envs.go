@@ -36,18 +36,18 @@ var appEnv *ApplicationEnv
 func AppEnv() ApplicationEnv {
 	if appEnv == nil {
 		dbEnv := DBEnv{
-			DatabaseName: os.Getenv("MONGO_DATABASE"), // required
-			Username:     os.Getenv("MONGO_USERNAME"), // required
-			Password:     os.Getenv("MONGO_PASSWORD"), // required
-			Uri:          os.Getenv("MONGO_URI"),      // required
+			DatabaseName: GetRequiredEnv("MONGO_DATABASE"), // required
+			Username:     GetRequiredEnv("MONGO_USERNAME"), // required
+			Password:     GetRequiredEnv("MONGO_PASSWORD"), // required
+			Uri:          GetRequiredEnv("MONGO_URI"),      // required
 		}
 
 		appEnv = &ApplicationEnv{
-			ApiSecretAuthorization: os.Getenv("API_SECRET_AUTHORIZATION"), // required
+			ApiSecretAuthorization: GetRequiredEnv("API_SECRET_AUTHORIZATION"), // required
 			Port:                   getServerPort(),
 			ContextPath:            getServerContextPath(),
 			PeerResourcePath:       getPeerResourcePath(),
-			ApiSecretKey:           os.Getenv("API_SECRET_KEY"),
+			ApiSecretKey:           GetRequiredEnv("API_SECRET_KEY"),
 			InitFilePath:           os.Getenv("API_INIT_FILE"),
 			DBEnv:                  dbEnv,
 		}
@@ -74,4 +74,12 @@ func getServerContextPath() string {
 		return contextPath
 	}
 	return "/api/private-network/v1/"
+}
+
+func GetRequiredEnv(key string) string {
+	envValue := os.Getenv(key)
+	if envValue == "" {
+		panic(key + " environment variable is required")
+	}
+	return envValue
 }

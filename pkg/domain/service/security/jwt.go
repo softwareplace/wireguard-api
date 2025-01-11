@@ -15,7 +15,7 @@ import (
 func (a *apiSecurityServiceImpl) Validation(
 	ctx *request.ApiRequestContext,
 	next func(requestContext *request.ApiRequestContext,
-) (*models.User, bool)) (*models.User, bool) {
+	) (*models.User, bool)) (*models.User, bool) {
 	success := a.ExtractJWTClaims(ctx)
 
 	if !success {
@@ -84,9 +84,6 @@ func (a *apiSecurityServiceImpl) JWTClaims(ctx *request.ApiRequestContext) (map[
 
 func (a *apiSecurityServiceImpl) Secret() []byte {
 	secret := envUtils.AppEnv().ApiSecretAuthorization
-	if secret == "" {
-		panic("API_SECRET_AUTHORIZATION environment variable is required")
-	}
 	return []byte(secret)
 }
 
