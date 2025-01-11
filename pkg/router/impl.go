@@ -12,8 +12,8 @@ func (a *apiRouterHandlerImpl) PublicRouter(handler ApiContextHandler, path stri
 }
 
 func (a *apiRouterHandlerImpl) Add(handler ApiContextHandler, path string, method string, requiredRoles ...string) {
-	apiRoute.HandleFunc(appEnv.ContextPath+path, func(writer http.ResponseWriter, h *http.Request) {
-		ctx := request.Of(writer, h)
+	apiRoute.HandleFunc(appEnv.ContextPath+path, func(writer http.ResponseWriter, req *http.Request) {
+		ctx := request.Of(writer, req, "ROUTER/HANDLER")
 		handler(&ctx)
 	}).Methods(method)
 

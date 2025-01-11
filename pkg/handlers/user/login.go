@@ -31,6 +31,7 @@ func (h *handlerImpl) checkUserCredentials(ctx *request.ApiRequestContext, userI
 			return
 		}
 		ctx.InternalServerError("Internal Server Error")
+		log.Printf("[%s]:: find user by username or email failed: %v", ctx.GetSessionId(), err)
 
 		return
 	}
@@ -43,6 +44,7 @@ func (h *handlerImpl) checkUserCredentials(ctx *request.ApiRequestContext, userI
 	// Generate JWT and respond
 	tokenData, err := h.ApiSecurityService().GenerateJWT(*userResponse)
 	if err != nil {
+		log.Printf("[%s]:: generating new jwt failed: %v", ctx.GetSessionId(), err)
 		ctx.InternalServerError("Error generating token")
 		return
 	}

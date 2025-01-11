@@ -5,6 +5,7 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
+	"log"
 	"net/http"
 )
 
@@ -14,6 +15,7 @@ func (h *handlerImpl) CreateUser(ctx *request.ApiRequestContext) {
 
 func (h *handlerImpl) validateUserFields(ctx *request.ApiRequestContext, user models.User) {
 	if err := validator.ValidateUserFields(user); err != nil {
+		log.Printf("[%s]:: validation failed with error: %v", ctx.GetSessionId(), err)
 		ctx.Error(err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -21,6 +23,7 @@ func (h *handlerImpl) validateUserFields(ctx *request.ApiRequestContext, user mo
 	_, err := h.UsersRepository().FindUserByUsernameOrEmail(user.Username, user.Email)
 
 	if err == nil {
+		log.Printf("[%s]:: username or email already exists: %v", ctx.GetSessionId(), err)
 		ctx.Error("Username or email already exists", http.StatusConflict)
 		return
 	}
@@ -28,6 +31,7 @@ func (h *handlerImpl) validateUserFields(ctx *request.ApiRequestContext, user mo
 	hashedPassword, salt, err := sec.HashPassword(user.Password)
 
 	if err != nil {
+		log.Printf("[%s]:: error encrypting password: %v", ctx.GetSessionId(), err)
 		ctx.Error("Error encrypting password", http.StatusInternalServerError)
 		return
 	}
@@ -37,9 +41,11 @@ func (h *handlerImpl) validateUserFields(ctx *request.ApiRequestContext, user mo
 	user.Status = "ACTIVE"
 
 	if err := h.UsersRepository().Save(user); err != nil {
+		log.Printf("[%s]:: error saving user to the database: %v", ctx.GetSessionId(), err)
 		ctx.Error("Error saving user to the database", http.StatusInternalServerError)
 		return
 	}
 
+	log.Printf("[%s]:: user created successfully", ctx.GetSessionId())
 	ctx.Created(map[string]interface{}{"message": "User created successfully"})
 }

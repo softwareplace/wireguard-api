@@ -19,15 +19,15 @@ func AccessValidation(next http.Handler) http.Handler {
 			}
 		}
 
-		ctx := request.Of(w, r)
+		ctx := request.Of(w, r, "MIDDLEWARE/ACCESS_VALIDATION")
 
 		if !matchFound {
-			_, success := apiSecurityService.Validation(&ctx, _nextValidation)
+			_, success := apiSecurityService.Validation(ctx, _nextValidation)
 			if !success {
 				return
 			}
 
-			if !hasResourceAccess(&ctx) {
+			if !hasResourceAccess(ctx) {
 				return
 			}
 		}
@@ -36,7 +36,7 @@ func AccessValidation(next http.Handler) http.Handler {
 	})
 }
 
-func hasResourceAccess(ctx *request.ApiRequestContext) bool {
+func hasResourceAccess(ctx request.ApiRequestContext) bool {
 	userRoles, err := ctx.GetRoles()
 
 	if err != nil {
@@ -72,7 +72,7 @@ func hasResourceAccess(ctx *request.ApiRequestContext) bool {
 	return true
 }
 
-func _nextValidation(ctx *request.ApiRequestContext) (*models.User, bool) {
+func _nextValidation(ctx request.ApiRequestContext) (*models.User, bool) {
 	accessContext := ctx.GetAccessContext()
 	userData, err := usersRepo.FindUserBySalt(accessContext.AccessId)
 	if err != nil {

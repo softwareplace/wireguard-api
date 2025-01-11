@@ -9,12 +9,13 @@ import (
 func (h *handlerImpl) GetAvailablePeer(ctx *request.ApiRequestContext) {
 	peer, err, notFound := h.Service().GetAvailablePeer()
 	if notFound {
+		log.Printf("[%s]:: no peer available: %v", ctx.GetSessionId(), err)
 		ctx.Error("No available peer", http.StatusNotFound)
 		return
 	}
 
 	if err != nil {
-		log.Printf("Error getting peer: %v", err)
+		log.Printf("[%s]:: Error getting peer: %v", ctx.GetSessionId(), err)
 		ctx.Error("Failed to get peer", http.StatusInternalServerError)
 		return
 	}

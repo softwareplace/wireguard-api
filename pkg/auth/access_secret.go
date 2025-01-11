@@ -23,7 +23,7 @@ var (
 type ApiSecurityHandler interface {
 	InitAPISecretKey()
 	Middleware(next http.Handler) http.Handler
-	ValidatePublicKey(ctx *request.ApiRequestContext) error
+	ValidatePublicKey(ctx request.ApiRequestContext) error
 }
 
 type apiSecurityHandlerImpl struct{}
@@ -35,9 +35,9 @@ func NewApiSecurityHandler() ApiSecurityHandler {
 func (a *apiSecurityHandlerImpl) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Validate the public key
-		ctx := request.Of(w, r)
+		ctx := request.Of(w, r, "MIDDLEWARE/API_SECRET")
 
-		if err := a.ValidatePublicKey(&ctx); err != nil {
+		if err := a.ValidatePublicKey(ctx); err != nil {
 			ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
 			return
 		}
@@ -82,7 +82,7 @@ func (a *apiSecurityHandlerImpl) InitAPISecretKey() {
 
 // ValidatePublicKey validates a given public key (in Base64 format) against the private key (apiSecret).
 // This is performed only if mustValidatePublicKey is true.
-func (a *apiSecurityHandlerImpl) ValidatePublicKey(ctx *request.ApiRequestContext) error {
+func (a *apiSecurityHandlerImpl) ValidatePublicKey(ctx request.ApiRequestContext) error {
 	// Decode the Base64-encoded public key
 	claims, err := apiSecurityService.JWTClaims(ctx)
 

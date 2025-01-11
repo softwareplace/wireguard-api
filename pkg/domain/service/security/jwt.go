@@ -13,8 +13,8 @@ import (
 )
 
 func (a *apiSecurityServiceImpl) Validation(
-	ctx *request.ApiRequestContext,
-	next func(requestContext *request.ApiRequestContext,
+	ctx request.ApiRequestContext,
+	next func(requestContext request.ApiRequestContext,
 	) (*models.User, bool)) (*models.User, bool) {
 	success := a.ExtractJWTClaims(ctx)
 
@@ -32,7 +32,7 @@ func (a *apiSecurityServiceImpl) Validation(
 	return user, success
 }
 
-func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx *request.ApiRequestContext) bool {
+func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx request.ApiRequestContext) bool {
 	accessUserContext := ctx.GetAccessContext()
 	token, err := jwt.Parse(accessUserContext.Authorization, func(token *jwt.Token) (interface{}, error) {
 		return a.Secret(), nil
@@ -65,7 +65,7 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx *request.ApiRequestContext
 	return false
 }
 
-func (a *apiSecurityServiceImpl) JWTClaims(ctx *request.ApiRequestContext) (map[string]interface{}, error) {
+func (a *apiSecurityServiceImpl) JWTClaims(ctx request.ApiRequestContext) (map[string]interface{}, error) {
 	accessUserContext := ctx.GetAccessContext()
 	token, err := jwt.Parse(accessUserContext.ApiKey, func(token *jwt.Token) (interface{}, error) {
 		return a.Secret(), nil
