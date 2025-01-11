@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/softwareplace/wireguard-api/pkg/domain/repository/api_secret"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 	"log"
 	"net/http"
@@ -37,14 +36,14 @@ func NewApiSecurityHandler() ApiSecurityHandler {
 func (a *apiSecurityHandlerImpl) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Validate the public key
-		ctx := request.Build(w, r)
+		ctx := request.Of(w, r)
 
-		if err := a.ValidatePublicKey(&ctx); err != nil {
-			shared.MakeErrorResponse(w, "You are not allowed to access this resource", http.StatusUnauthorized)
+		if err := a.ValidatePublicKey(ctx); err != nil {
+			ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
 			return
 		}
 
-		next.ServeHTTP(w, ctx.Request)
+		ctx.Next(next)
 	})
 }
 

@@ -1,27 +1,23 @@
 package peer
 
 import (
-	"encoding/json"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"log"
 	"net/http"
 )
 
-func (h *handlerImpl) GetAvailablePeer(w http.ResponseWriter, r *http.Request) {
+func (h *handlerImpl) GetAvailablePeer(ctx *request.ApiRequestContext) {
 	peer, err, notFound := h.Service().GetAvailablePeer()
 	if notFound {
-		shared.MakeErrorResponse(w, "No available peer", http.StatusNotFound)
+		ctx.Error("No available peer", http.StatusNotFound)
 		return
 	}
 
 	if err != nil {
 		log.Printf("Error getting peer: %v", err)
-		shared.MakeErrorResponse(w, "Failed to get peer", http.StatusInternalServerError)
+		ctx.Error("Failed to get peer", http.StatusInternalServerError)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(peer); err != nil {
-		log.Printf("Error getting peer: %v", err)
-		shared.MakeErrorResponse(w, "Failed to get peer", http.StatusInternalServerError)
-	}
+	ctx.Ok(peer)
 }

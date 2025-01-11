@@ -11,7 +11,7 @@ type ApiSecurityService interface {
 	GenerateApiSecretJWT(jwtInfo ApiJWTInfo) (string, error)
 	ExtractJWTClaims(requestContext *request.ApiRequestContext) bool
 	JWTClaims(ctx *request.ApiRequestContext) (map[string]interface{}, error)
-	GenerateJWT(user models.User) (map[string]string, error)
+	GenerateJWT(user models.User) (map[string]interface{}, error)
 	Encrypt(key string) (string, error)
 	Decrypt(encrypted string) (string, error)
 	Validation(

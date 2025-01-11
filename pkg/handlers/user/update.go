@@ -1,29 +1,21 @@
 package user
 
 import (
-	"encoding/json"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"net/http"
 )
 
-func (h *handlerImpl) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var updatedUser models.UserUpdate
-	err := json.NewDecoder(r.Body).Decode(&updatedUser)
-	if err != nil {
-		shared.MakeErrorResponse(w, "Invalid input", http.StatusBadRequest)
-		return
-	}
+func (h *handlerImpl) UpdateUser(ctx *request.ApiRequestContext) {
+	request.GetRequestBody(ctx, models.UserUpdate{}, h.useUpdateValidation, request.FailedToLoadBody)
+}
 
-	build := request.Build(w, r)
-	accessContext := build.GetAccessContext()
-
-	currentUser, err := h.UsersRepository().FindUserBySalt(accessContext.AccessId)
+func (h *handlerImpl) useUpdateValidation(ctx *request.ApiRequestContext, updatedUser models.UserUpdate) {
+	currentUser, err := h.UsersRepository().FindUserBySalt(ctx.AccessContext.AccessId)
 
 	if err != nil {
-		shared.MakeErrorResponse(w, "Error finding user in the database", http.StatusInternalServerError)
+		ctx.Error("Error finding user in the database", http.StatusInternalServerError)
 		return
 	}
 
@@ -33,7 +25,7 @@ func (h *handlerImpl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		currentUser.Password = pass
 		currentUser.Salt = salt
 		if err != nil {
-			shared.MakeErrorResponse(w, "Error encrypting password", http.StatusInternalServerError)
+			ctx.Error("Error encrypting password", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -42,8 +34,8 @@ func (h *handlerImpl) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	err = h.UsersRepository().Update(*currentUser)
 
 	if err != nil {
-		shared.MakeErrorResponse(w, "Error updating user in the database", http.StatusInternalServerError)
+		ctx.Error("Error updating user in the database", http.StatusInternalServerError)
 		return
 	}
-	shared.MakeResponse(w, map[string]interface{}{"message": "User updated successfully"}, http.StatusOK)
+	ctx.Ok(map[string]interface{}{"message": "User updated successfully"})
 }

@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"strings"
 )
 
 func Encrypt(value string, secret []byte) (string, error) {
@@ -34,6 +35,9 @@ func Encrypt(value string, secret []byte) (string, error) {
 }
 
 func Decrypt(encrypted string, secret []byte) (string, error) {
+	if len(strings.TrimSpace(encrypted)) == 0 {
+		return "", fmt.Errorf("encrypted value must not be empty")
+	}
 	block, err := aes.NewCipher(secret)
 	if err != nil {
 		return "", err

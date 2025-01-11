@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	envUtils "github.com/softwareplace/wireguard-api/pkg/utils/env"
 	"log"
@@ -26,7 +25,7 @@ func (a *apiSecurityServiceImpl) Validation(
 	user, success := next(ctx)
 
 	if !success {
-		shared.MakeErrorResponse(ctx.Writer, "Authorization failed", http.StatusForbidden)
+		ctx.Error("Authorization failed", http.StatusForbidden)
 		return nil, success
 	}
 	ctx.SetUser(user)
@@ -41,7 +40,7 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx *request.ApiRequestContext
 
 	if err != nil {
 		log.Printf("JWT/PARSE: Authorization failed: %v", err)
-		shared.MakeErrorResponse(ctx.Writer, "Authorization failed", http.StatusForbidden)
+		ctx.Error("Authorization failed", http.StatusForbidden)
 		return false
 	}
 
@@ -52,7 +51,7 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx *request.ApiRequestContext
 
 		if err != nil {
 			log.Printf("JWT/CLAIMS_EXTRACT: Authorization failed: %v", err)
-			shared.MakeErrorResponse(ctx.Writer, "Authorization failed", http.StatusForbidden)
+			ctx.Error("Authorization failed", http.StatusForbidden)
 			return false
 		}
 
@@ -62,7 +61,7 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx *request.ApiRequestContext
 	}
 
 	log.Printf("JWT/CLAIMS_EXTRACT: failed with error: %v", err)
-	shared.MakeErrorResponse(ctx.Writer, "Authorization failed", http.StatusForbidden)
+	ctx.Error("Authorization failed", http.StatusForbidden)
 	return false
 }
 
@@ -92,7 +91,7 @@ func (a *apiSecurityServiceImpl) Secret() []byte {
 }
 
 // GenerateJWT creates a JWT token with the username and role
-func (a *apiSecurityServiceImpl) GenerateJWT(user models.User) (map[string]string, error) {
+func (a *apiSecurityServiceImpl) GenerateJWT(user models.User) (map[string]interface{}, error) {
 	duration := time.Minute * 15
 	expiration := time.Now().Add(duration).Unix()
 	requestBy, err := a.Encrypt(user.Salt)
@@ -113,5 +112,5 @@ func (a *apiSecurityServiceImpl) GenerateJWT(user models.User) (map[string]strin
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(a.Secret())
-	return map[string]string{"token": signedToken, "expires": strconv.FormatInt(expiration, 10)}, err
+	return map[string]interface{}{"token": signedToken, "expires": strconv.FormatInt(expiration, 10)}, err
 }

@@ -1,28 +1,24 @@
 package peer
 
 import (
-	"encoding/json"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"log"
 	"net/http"
 )
 
-func (h *handlerImpl) Stream(w http.ResponseWriter, r *http.Request) {
-	var peers []models.Peer
-	err := json.NewDecoder(r.Body).Decode(&peers)
+func (h *handlerImpl) Stream(ctx *request.ApiRequestContext) {
+	request.GetRequestBody(ctx, []models.Peer{}, h.save, request.FailedToLoadBody)
+}
 
-	if err != nil {
-		shared.MakeErrorResponse(w, "Failed to decode json body", http.StatusInternalServerError)
-		return
-
-	}
-	err = h.Service().Stream(peers)
+func (h *handlerImpl) save(ctx *request.ApiRequestContext, peers []models.Peer) {
+	err := h.Service().Stream(peers)
 	if err != nil {
 		log.Printf("Error saving peers: %v", err)
-		shared.MakeErrorResponse(w, "Failed to save peers", http.StatusInternalServerError)
+		ctx.Error("Failed to save peers", http.StatusInternalServerError)
 		return
 	}
 	log.Printf("Peers saved successfully")
-	shared.MakeErrorResponse(w, "Peers saved successfully", http.StatusCreated)
+	ctx.Response(map[string]string{"message": "Peers saved successfully"}, http.StatusOK)
+
 }

@@ -1,25 +1,20 @@
 package user
 
 import (
-	"encoding/json"
 	"errors"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
-	"net/http"
 )
 
-func (h *handlerImpl) Login(w http.ResponseWriter, r *http.Request) {
-	var userInput models.User
+func (h *handlerImpl) Login(ctx *request.ApiRequestContext) {
+	request.GetRequestBody(ctx, models.User{}, h.checkUserCredentials, request.FailedToLoadBody)
+}
 
-	err := json.NewDecoder(r.Body).Decode(&userInput)
-	if err != nil {
-		shared.MakeErrorResponse(w, "Invalid input", http.StatusBadRequest)
-		return
-	}
+func (h *handlerImpl) checkUserCredentials(ctx *request.ApiRequestContext, userInput models.User) {
 	decrypt, err := sec.Decrypt(userInput.Password, []byte(sec.SampleEncryptKey))
 
 	if err != nil {
@@ -32,28 +27,25 @@ func (h *handlerImpl) Login(w http.ResponseWriter, r *http.Request) {
 	userResponse, err := h.UsersRepository().FindUserByUsernameOrEmail(userInput.Username, userInput.Email)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			shared.MakeErrorResponse(w, "Unauthorized", http.StatusUnauthorized)
+			ctx.Unauthorized()
 			return
 		}
-		shared.MakeErrorResponse(w, "Internal Server Error", http.StatusInternalServerError)
+		ctx.InternalServerError("Internal Server Error")
+
 		return
 	}
 
 	if !validator.CheckPassword(userInput.Password, userResponse.Password, userResponse.Salt) {
-		shared.MakeErrorResponse(w, "Unauthorized", http.StatusUnauthorized)
+		ctx.Unauthorized()
 		return
 	}
 
 	// Generate JWT and respond
 	tokenData, err := h.ApiSecurityService().GenerateJWT(*userResponse)
 	if err != nil {
-		shared.MakeErrorResponse(w, "Error generating token", http.StatusInternalServerError)
+		ctx.InternalServerError("Error generating token")
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(tokenData)
-	if err != nil {
-		shared.MakeErrorResponse(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	ctx.Ok(tokenData)
 }

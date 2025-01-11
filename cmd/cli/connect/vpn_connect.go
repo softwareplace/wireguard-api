@@ -32,7 +32,7 @@ func Run(args *shared.Args) {
 			log.Fatalf("Failed to decode PeerData: %v", err)
 		}
 
-		// Create the temporary directory if it doesn't exist
+		// Created the temporary directory if it doesn't exist
 		if args.PeerSourceDir == "" {
 			args.PeerSourceDir = "/etc/wireguard"
 		}

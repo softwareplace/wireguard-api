@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/shared"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"log"
 	"net/http"
@@ -20,35 +19,35 @@ func AccessValidation(next http.Handler) http.Handler {
 			}
 		}
 
-		ctx := request.Build(w, r)
+		ctx := request.Of(w, r)
 
 		if !matchFound {
-			_, success := apiSecurityService.Validation(&ctx, _nextValidation)
+			_, success := apiSecurityService.Validation(ctx, _nextValidation)
 			if !success {
 				return
 			}
 
-			if !hasResourceAccess(w, r, ctx) {
+			if !hasResourceAccess(ctx) {
 				return
 			}
 		}
 
-		next.ServeHTTP(w, ctx.Request)
+		ctx.Next(next)
 	})
 }
 
-func hasResourceAccess(w http.ResponseWriter, r *http.Request, ctx request.ApiRequestContext) bool {
+func hasResourceAccess(ctx *request.ApiRequestContext) bool {
 	userRoles, err := ctx.GetRoles()
 
 	if err != nil {
-		shared.MakeErrorResponse(w, "You are not allowed to access this resource", http.StatusUnauthorized)
+		ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
 		return false
 	}
 
-	accessRoles, hasRoles := GetRolesForPath(r)
+	accessRoles, hasRoles := GetRolesForPath(ctx.Request)
 
 	if !hasRoles {
-		shared.MakeErrorResponse(w, "You are not allowed to access this resource", http.StatusUnauthorized)
+		ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
 		return false
 	}
 
@@ -67,7 +66,7 @@ func hasResourceAccess(w http.ResponseWriter, r *http.Request, ctx request.ApiRe
 	}
 
 	if !hasAccess {
-		shared.MakeErrorResponse(w, "You are not allowed to access this resource", http.StatusUnauthorized)
+		ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
 		return false
 	}
 	return true

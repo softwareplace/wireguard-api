@@ -2,14 +2,14 @@ package peer
 
 import (
 	"github.com/softwareplace/wireguard-api/pkg/domain/service/peer"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/router"
-	"net/http"
 )
 
 type Handler interface {
-	GetAvailablePeer(w http.ResponseWriter, r *http.Request)
+	GetAvailablePeer(ctx *request.ApiRequestContext)
+	Stream(ctx *request.ApiRequestContext)
 	Service() peer.Service
-	Stream(w http.ResponseWriter, r *http.Request)
 }
 
 type handlerImpl struct{}
