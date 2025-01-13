@@ -29,6 +29,10 @@ func rootAppMiddleware(next http.Handler) http.Handler {
 				r.URL.Path,
 				duration,
 			)
+
+			error_handler.Handler(ctx.Flush, func(err any) {
+				log.Printf("[%s]:: Error flushing response: %v", ctx.GetSessionId(), err)
+			})
 		}, func(err any) {
 			onError(err, w)
 		})

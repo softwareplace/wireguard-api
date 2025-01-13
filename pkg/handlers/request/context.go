@@ -32,6 +32,12 @@ func Of(w http.ResponseWriter, r *http.Request, reference string) ApiRequestCont
 	return createNewContext(w, r, reference)
 }
 
+func (ctx *ApiRequestContext) Flush() {
+	ctx.Writer = nil
+	ctx.Request = nil
+	ctx.AccessContext = nil
+}
+
 func createNewContext(w http.ResponseWriter, r *http.Request, reference string) ApiRequestContext {
 	w.Header().Set("Content-Type", "application/json")
 	ctx := ApiRequestContext{
