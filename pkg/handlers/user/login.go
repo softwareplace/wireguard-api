@@ -2,7 +2,8 @@ package user
 
 import (
 	"errors"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/http-utils/server"
+
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
@@ -10,11 +11,11 @@ import (
 	"log"
 )
 
-func (h *handlerImpl) Login(ctx *request.ApiRequestContext) {
-	request.GetRequestBody(ctx, models.User{}, h.checkUserCredentials, request.FailedToLoadBody)
+func (h *handlerImpl) Login(ctx *server.ApiRequestContext) {
+	server.GetRequestBody(ctx, models.User{}, h.checkUserCredentials, server.FailedToLoadBody)
 }
 
-func (h *handlerImpl) checkUserCredentials(ctx *request.ApiRequestContext, userInput models.User) {
+func (h *handlerImpl) checkUserCredentials(ctx *server.ApiRequestContext, userInput models.User) {
 	decrypt, err := sec.Decrypt(userInput.Password, []byte(sec.SampleEncryptKey))
 
 	if err != nil {

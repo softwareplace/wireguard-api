@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"log"
@@ -19,7 +20,7 @@ func AccessValidation(next http.Handler) http.Handler {
 			}
 		}
 
-		ctx := request.Of(w, r, "MIDDLEWARE/ACCESS_VALIDATION")
+		ctx := server.Of(w, r, "MIDDLEWARE/ACCESS_VALIDATION")
 
 		if !matchFound {
 			_, success := apiSecurityService.Validation(ctx, _nextValidation)
@@ -36,8 +37,10 @@ func AccessValidation(next http.Handler) http.Handler {
 	})
 }
 
-func hasResourceAccess(ctx request.ApiRequestContext) bool {
-	userRoles, err := ctx.GetRoles()
+func hasResourceAccess(ctx server.ApiRequestContext) bool {
+	apiContext := ctx.RequestData.(request.ApiContext)
+
+	userRoles, err := apiContext.GetRoles()
 
 	if err != nil {
 		ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
@@ -72,13 +75,14 @@ func hasResourceAccess(ctx request.ApiRequestContext) bool {
 	return true
 }
 
-func _nextValidation(ctx request.ApiRequestContext) (*models.User, bool) {
-	accessContext := ctx.GetAccessContext()
-	userData, err := usersRepo.FindUserBySalt(accessContext.AccessId)
+func _nextValidation(ctx server.ApiRequestContext) (*models.User, bool) {
+	apiContext := ctx.RequestData.(request.ApiContext)
+
+	userData, err := usersRepo.FindUserBySalt(apiContext.AccessId)
 	if err != nil {
 		log.Printf("Failed to valiaded user %v access: %v", ctx, err)
 		return nil, false
 	}
-	ctx.SetUser(userData)
+	apiContext.SetUser(userData)
 	return userData, true
 }

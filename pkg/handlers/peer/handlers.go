@@ -1,14 +1,13 @@
 package peer
 
 import (
+	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/domain/service/peer"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/router"
 )
 
 type Handler interface {
-	GetAvailablePeer(ctx *request.ApiRequestContext)
-	Stream(ctx *request.ApiRequestContext)
+	GetAvailablePeer(ctx *server.ApiRequestContext)
+	Stream(ctx *server.ApiRequestContext)
 	Service() peer.Service
 }
 
@@ -22,7 +21,7 @@ func (h *handlerImpl) Service() peer.Service {
 	return peer.GetService()
 }
 
-func Init(api router.ApiRouterHandler) {
+func Init(api server.ApiRouterHandler) {
 	handler := GetHandler()
 	api.Get(handler.GetAvailablePeer, "peers", "resource:peers:get:peer")
 	api.Post(handler.Stream, "peers/stream", "resource:peers:stream:peers")

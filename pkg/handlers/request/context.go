@@ -1,80 +1,70 @@
 package request
 
 import (
-	"context"
-	"github.com/google/uuid"
-	"log"
+	"fmt"
+	"github.com/softwareplace/http-utils/server"
+	"github.com/softwareplace/wireguard-api/pkg/models"
 	"net/http"
 )
 
-const (
-	apiAccessContextKey = "apiAccessContext"
-	XApiKey             = "X-Api-Key"
-)
-
-type ApiRequestContext struct {
-	Writer        http.ResponseWriter
-	Request       *http.Request
-	AccessContext *AccessContext
-	sessionId     string
+type ApiContext struct {
+	User                *models.User
+	AccessId            string
+	ApiKeyId            string
+	AuthorizationClaims map[string]interface{}
+	ApiKeyClaims        map[string]interface{}
 }
 
-func Of(w http.ResponseWriter, r *http.Request, reference string) ApiRequestContext {
-	currentContext := r.Context().Value(apiAccessContextKey)
-
-	if currentContext != nil {
-		var ctx *ApiRequestContext
-		ctx = currentContext.(*ApiRequestContext)
-		ctx.updateContext(r)
-		return *ctx
-	}
-
-	return createNewContext(w, r, reference)
+func ContextBuilder(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := server.Of(w, r, "MIDDLEWARE/CONTEXT_BUILDER")
+		ctx.RequestData = &ApiContext{}
+		ctx.Next(next)
+	})
 }
 
-func (ctx *ApiRequestContext) Flush() {
-	ctx.Writer = nil
-	ctx.Request = nil
-	ctx.AccessContext = nil
-}
-
-func createNewContext(w http.ResponseWriter, r *http.Request, reference string) ApiRequestContext {
-	w.Header().Set("Content-Type", "application/json")
-	ctx := ApiRequestContext{
-		Writer:    w,
-		Request:   r,
-		sessionId: uuid.New().String(),
-	}
-
-	log.Printf("%s -> initialized a context with session id: %s", reference, ctx.sessionId)
-	ctx.updateContext(r)
-	return ctx
-}
-
-func (ctx *ApiRequestContext) updateContext(r *http.Request) {
-	ctx.AccessContext = ctx.GetAccessContext()
-	apiRequestContext := context.WithValue(ctx.Request.Context(), apiAccessContextKey, ctx)
-	ctx.Request = r.WithContext(apiRequestContext)
-}
-
-func (ctx *ApiRequestContext) GetAccessApiKeyId() string {
-	if ctx.AccessContext != nil && ctx.AccessContext.ApiKeyId != "" {
-		return ctx.AccessContext.ApiKeyId
+func (ctx *ApiContext) GetAccessApiKeyId() string {
+	if ctx.ApiKeyId != "" {
+		return ctx.ApiKeyId
 	}
 	return "N/A"
 }
 
-func (ctx *ApiRequestContext) GetAccessId() string {
-	if ctx.AccessContext != nil && ctx.AccessContext.AccessId != "" {
-		return ctx.AccessContext.AccessId
+func (ctx *ApiContext) GetAccessId() string {
+	if ctx.AccessId != "" {
+		return ctx.AccessId
 	}
 	return "N/A"
 }
 
-func (ctx *ApiRequestContext) GetSessionId() string {
-	return ctx.sessionId
+func (ctx *ApiContext) new() *ApiContext {
+	return &ApiContext{}
 }
 
-func (ctx *ApiRequestContext) Next(next http.Handler) {
-	next.ServeHTTP(ctx.Writer, ctx.Request)
+func (ctx *ApiContext) GetRoles() (roles []string, err error) {
+	user := ctx.User
+	if user != nil && len(user.Roles) > 0 {
+		return user.Roles, nil
+	}
+	return nil, fmt.Errorf("user roles not found")
+}
+
+func (ctx *ApiContext) SetUser(user *models.User) {
+	ctx.User = user
+}
+
+func (ctx *ApiContext) SetAuthorizationClaims(authorizationClaims map[string]interface{}) {
+	ctx.AuthorizationClaims = authorizationClaims
+}
+
+func (ctx *ApiContext) SetApiKeyClaims(apiKeyClaims map[string]interface{}) {
+	ctx.ApiKeyClaims = apiKeyClaims
+}
+
+func (ctx *ApiContext) SetApiKeyId(apiKeyId string) {
+	ctx.ApiKeyId = apiKeyId
+}
+
+func (ctx *ApiContext) SetAccessId(accessId string) {
+	ctx.AccessId = accessId
 }

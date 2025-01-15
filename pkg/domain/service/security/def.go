@@ -1,7 +1,7 @@
 package security
 
 import (
-	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"time"
 )
@@ -9,14 +9,14 @@ import (
 type ApiSecurityService interface {
 	Secret() []byte
 	GenerateApiSecretJWT(jwtInfo ApiJWTInfo) (string, error)
-	ExtractJWTClaims(requestContext request.ApiRequestContext) bool
-	JWTClaims(ctx request.ApiRequestContext) (map[string]interface{}, error)
+	ExtractJWTClaims(requestContext server.ApiRequestContext) bool
+	JWTClaims(ctx server.ApiRequestContext) (map[string]interface{}, error)
 	GenerateJWT(user models.User) (map[string]interface{}, error)
 	Encrypt(key string) (string, error)
 	Decrypt(encrypted string) (string, error)
 	Validation(
-		ctx request.ApiRequestContext,
-		next func(ctx request.ApiRequestContext) (*models.User, bool),
+		ctx server.ApiRequestContext,
+		next func(ctx server.ApiRequestContext) (*models.User, bool),
 	) (*models.User, bool)
 }
 

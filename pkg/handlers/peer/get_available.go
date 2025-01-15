@@ -1,12 +1,12 @@
 package peer
 
 import (
-	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/http-utils/server"
 	"log"
 	"net/http"
 )
 
-func (h *handlerImpl) GetAvailablePeer(ctx *request.ApiRequestContext) {
+func (h *handlerImpl) GetAvailablePeer(ctx *server.ApiRequestContext) {
 	peer, err, notFound := h.Service().GetAvailablePeer()
 	if notFound {
 		log.Printf("[%s]:: no peer available: %v", ctx.GetSessionId(), err)

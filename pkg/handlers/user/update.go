@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
@@ -8,12 +9,13 @@ import (
 	"net/http"
 )
 
-func (h *handlerImpl) UpdateUser(ctx *request.ApiRequestContext) {
-	request.GetRequestBody(ctx, models.UserUpdate{}, h.useUpdateValidation, request.FailedToLoadBody)
+func (h *handlerImpl) UpdateUser(ctx *server.ApiRequestContext) {
+	server.GetRequestBody(ctx, models.UserUpdate{}, h.useUpdateValidation, server.FailedToLoadBody)
 }
 
-func (h *handlerImpl) useUpdateValidation(ctx *request.ApiRequestContext, updatedUser models.UserUpdate) {
-	currentUser, err := h.UsersRepository().FindUserBySalt(ctx.AccessContext.AccessId)
+func (h *handlerImpl) useUpdateValidation(ctx *server.ApiRequestContext, updatedUser models.UserUpdate) {
+	apiContext := ctx.RequestData.(request.ApiContext)
+	currentUser, err := h.UsersRepository().FindUserBySalt(apiContext.AccessId)
 
 	if err != nil {
 		log.Printf("[%s]:: find user by salt failed: %v", ctx.GetSessionId(), err)

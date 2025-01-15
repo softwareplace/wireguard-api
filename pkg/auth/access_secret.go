@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/domain/repository/api_secret"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/utils/env"
@@ -23,7 +24,7 @@ var (
 type ApiSecurityHandler interface {
 	InitAPISecretKey()
 	Middleware(next http.Handler) http.Handler
-	ValidatePublicKey(ctx request.ApiRequestContext) error
+	ValidatePublicKey(ctx server.ApiRequestContext) error
 }
 
 type apiSecurityHandlerImpl struct{}
@@ -35,7 +36,7 @@ func NewApiSecurityHandler() ApiSecurityHandler {
 func (a *apiSecurityHandlerImpl) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Validate the public key
-		ctx := request.Of(w, r, "MIDDLEWARE/API_SECRET")
+		ctx := server.Of(w, r, "MIDDLEWARE/API_SECRET")
 
 		if err := a.ValidatePublicKey(ctx); err != nil {
 			ctx.Error("You are not allowed to access this resource", http.StatusUnauthorized)
@@ -82,15 +83,16 @@ func (a *apiSecurityHandlerImpl) InitAPISecretKey() {
 
 // ValidatePublicKey validates a given public key (in Base64 format) against the private key (apiSecret).
 // This is performed only if mustValidatePublicKey is true.
-func (a *apiSecurityHandlerImpl) ValidatePublicKey(ctx request.ApiRequestContext) error {
+func (a *apiSecurityHandlerImpl) ValidatePublicKey(ctx server.ApiRequestContext) error {
 	// Decode the Base64-encoded public key
 	claims, err := apiSecurityService.JWTClaims(ctx)
 
 	if err != nil {
 		return err
 	}
+	apiContext := ctx.RequestData.(request.ApiContext)
 
-	ctx.SetApiKeyClaims(claims)
+	apiContext.SetApiKeyClaims(claims)
 
 	id, err := apiSecurityService.Decrypt(claims["key"].(string))
 
@@ -99,7 +101,7 @@ func (a *apiSecurityHandlerImpl) ValidatePublicKey(ctx request.ApiRequestContext
 	}
 
 	apiAccessSecret, err := api_secret.GetRepository().GetById(id)
-	ctx.SetApiKeyId(id)
+	apiContext.SetApiKeyId(id)
 	if err != nil {
 		return err
 	}

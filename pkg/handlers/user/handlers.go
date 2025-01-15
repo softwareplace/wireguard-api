@@ -1,9 +1,9 @@
 package user
 
 import (
+	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
 	"github.com/softwareplace/wireguard-api/pkg/domain/service/security"
-	"github.com/softwareplace/wireguard-api/pkg/router"
 	"net/http"
 )
 
@@ -26,7 +26,7 @@ func (h *handlerImpl) ApiSecurityService() security.ApiSecurityService {
 	return security.GetApiSecurityService()
 }
 
-func Init(api router.ApiRouterHandler) {
+func Init(api server.ApiRouterHandler) {
 	handler := handlerImpl{}
 	api.PublicRouter(handler.Login, "login", "POST")
 	api.Post(handler.CreateUser, "user", "POST", "resource:users:create:user")

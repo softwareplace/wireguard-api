@@ -3,6 +3,7 @@ package security
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	envUtils "github.com/softwareplace/wireguard-api/pkg/utils/env"
@@ -13,8 +14,8 @@ import (
 )
 
 func (a *apiSecurityServiceImpl) Validation(
-	ctx request.ApiRequestContext,
-	next func(requestContext request.ApiRequestContext,
+	ctx server.ApiRequestContext,
+	next func(requestContext server.ApiRequestContext,
 	) (*models.User, bool)) (*models.User, bool) {
 	success := a.ExtractJWTClaims(ctx)
 
@@ -28,13 +29,16 @@ func (a *apiSecurityServiceImpl) Validation(
 		ctx.Error("Authorization failed", http.StatusForbidden)
 		return nil, success
 	}
-	ctx.SetUser(user)
+	accessUserContext := ctx.RequestData.(request.ApiContext)
+
+	accessUserContext.SetUser(user)
 	return user, success
 }
 
-func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx request.ApiRequestContext) bool {
-	accessUserContext := ctx.GetAccessContext()
-	token, err := jwt.Parse(accessUserContext.Authorization, func(token *jwt.Token) (interface{}, error) {
+func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx server.ApiRequestContext) bool {
+	apiContext := ctx.RequestData.(request.ApiContext)
+
+	token, err := jwt.Parse(ctx.Authorization, func(token *jwt.Token) (interface{}, error) {
 		return a.Secret(), nil
 	})
 
@@ -45,7 +49,7 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx request.ApiRequestContext)
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		ctx.SetAuthorizationClaims(claims)
+		apiContext.SetAuthorizationClaims(claims)
 
 		requester, err := a.Decrypt(claims["request"].(string))
 
@@ -55,7 +59,7 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx request.ApiRequestContext)
 			return false
 		}
 
-		ctx.SetAccessId(requester)
+		apiContext.SetAccessId(requester)
 
 		return true
 	}
@@ -65,9 +69,8 @@ func (a *apiSecurityServiceImpl) ExtractJWTClaims(ctx request.ApiRequestContext)
 	return false
 }
 
-func (a *apiSecurityServiceImpl) JWTClaims(ctx request.ApiRequestContext) (map[string]interface{}, error) {
-	accessUserContext := ctx.GetAccessContext()
-	token, err := jwt.Parse(accessUserContext.ApiKey, func(token *jwt.Token) (interface{}, error) {
+func (a *apiSecurityServiceImpl) JWTClaims(ctx server.ApiRequestContext) (map[string]interface{}, error) {
+	token, err := jwt.Parse(ctx.ApiKey, func(token *jwt.Token) (interface{}, error) {
 		return a.Secret(), nil
 	})
 

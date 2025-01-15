@@ -2,10 +2,10 @@ package connect
 
 import (
 	"fmt"
+	"github.com/softwareplace/http-utils/request"
+	httputilsserver "github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
 	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/http_api"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"golang.org/x/crypto/ssh/terminal"
 	"log"
@@ -71,12 +71,12 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 		"password": password,
 	}
 
-	api := http_api.NewApi(LoginResponse{})
+	api := request.NewApi(LoginResponse{})
 
-	config := http_api.Config(server.Host).
+	config := request.Build(server.Host).
 		WithPath("/login").
 		WithBody(reqBody).
-		WithHeader(request.XApiKey, server.ApiKey).
+		WithHeader(httputilsserver.XApiKey, server.ApiKey).
 		WithExpectedStatusCode(http.StatusOK)
 
 	loginResp, err := api.Post(config)
