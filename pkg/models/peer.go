@@ -2,7 +2,7 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-// UsedPeer represents a requested peer by a user
+// UsedPeer represents a requested peer by a user_service
 type UsedPeer struct {
 	Username string `json:"username"`
 	PeerData string `json:"peerData"`

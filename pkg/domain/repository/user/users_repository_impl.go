@@ -39,7 +39,7 @@ func (r *usersRepositoryImpl) FindUserBySalt(salt string) (*models.User, error) 
 	}).Decode(&currentUser)
 
 	if err != nil {
-		log.Printf("Error finding user by salt: %v", err)
+		log.Printf("Error finding user_service by salt: %v", err)
 		return nil, err
 	}
 	return &currentUser, nil

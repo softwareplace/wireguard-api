@@ -2,9 +2,8 @@ package request
 
 import (
 	"fmt"
-	"github.com/softwareplace/http-utils/server"
+	"github.com/softwareplace/http-utils/api_context"
 	"github.com/softwareplace/wireguard-api/pkg/models"
-	"net/http"
 )
 
 type ApiContext struct {
@@ -15,12 +14,24 @@ type ApiContext struct {
 	ApiKeyClaims        map[string]interface{}
 }
 
-func ContextBuilder(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := server.Of(w, r, "MIDDLEWARE/CONTEXT_BUILDER")
-		ctx.RequestData = &ApiContext{}
-		ctx.Next(next)
-	})
+func (ctx *ApiContext) Data(data api_context.ApiContextData) {
+	apiCtx := data.(*ApiContext)
+	ctx.User = apiCtx.User
+}
+
+func (ctx *ApiContext) Salt() string {
+	if ctx.User != nil {
+		return ctx.User.Salt
+
+	}
+	return "N/A"
+}
+
+func (ctx *ApiContext) Roles() []string {
+	if ctx.User != nil {
+		return ctx.User.Roles
+	}
+	return []string{}
 }
 
 func (ctx *ApiContext) GetAccessApiKeyId() string {
@@ -46,7 +57,7 @@ func (ctx *ApiContext) GetRoles() (roles []string, err error) {
 	if user != nil && len(user.Roles) > 0 {
 		return user.Roles, nil
 	}
-	return nil, fmt.Errorf("user roles not found")
+	return nil, fmt.Errorf("user_service roles not found")
 }
 
 func (ctx *ApiContext) SetUser(user *models.User) {
@@ -67,4 +78,12 @@ func (ctx *ApiContext) SetApiKeyId(apiKeyId string) {
 
 func (ctx *ApiContext) SetAccessId(accessId string) {
 	ctx.AccessId = accessId
+}
+
+func (ctx *ApiContext) SetRoles(roles []string) {
+}
+
+func ContextBuilder(ctx *api_context.ApiRequestContext[*ApiContext]) bool {
+	ctx.RequestData = &ApiContext{}
+	return true
 }

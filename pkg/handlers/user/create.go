@@ -1,7 +1,9 @@
 package user
 
 import (
+	"github.com/softwareplace/http-utils/api_context"
 	"github.com/softwareplace/http-utils/server"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
@@ -9,11 +11,11 @@ import (
 	"net/http"
 )
 
-func (h *handlerImpl) CreateUser(ctx *server.ApiRequestContext) {
+func (h *handlerImpl) CreateUser(ctx *api_context.ApiRequestContext[*request.ApiContext]) {
 	server.GetRequestBody(ctx, models.User{}, h.validateUserFields, server.FailedToLoadBody)
 }
 
-func (h *handlerImpl) validateUserFields(ctx *server.ApiRequestContext, user models.User) {
+func (h *handlerImpl) validateUserFields(ctx *api_context.ApiRequestContext[*request.ApiContext], user models.User) {
 	if err := validator.ValidateUserFields(user); err != nil {
 		log.Printf("[%s]:: validation failed with error: %v", ctx.GetSessionId(), err)
 		ctx.Error(err.Error(), http.StatusBadRequest)
@@ -41,11 +43,11 @@ func (h *handlerImpl) validateUserFields(ctx *server.ApiRequestContext, user mod
 	user.Status = "ACTIVE"
 
 	if err := h.UsersRepository().Save(user); err != nil {
-		log.Printf("[%s]:: error saving user to the database: %v", ctx.GetSessionId(), err)
-		ctx.Error("Error saving user to the database", http.StatusInternalServerError)
+		log.Printf("[%s]:: error saving user_service to the database: %v", ctx.GetSessionId(), err)
+		ctx.Error("Error saving user_service to the database", http.StatusInternalServerError)
 		return
 	}
 
-	log.Printf("[%s]:: user created successfully", ctx.GetSessionId())
+	log.Printf("[%s]:: user_service created successfully", ctx.GetSessionId())
 	ctx.Created(map[string]interface{}{"message": "User created successfully"})
 }

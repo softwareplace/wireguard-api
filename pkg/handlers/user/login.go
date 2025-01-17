@@ -2,7 +2,10 @@ package user
 
 import (
 	"errors"
+	"github.com/softwareplace/http-utils/api_context"
 	"github.com/softwareplace/http-utils/server"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"time"
 
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
@@ -11,11 +14,11 @@ import (
 	"log"
 )
 
-func (h *handlerImpl) Login(ctx *server.ApiRequestContext) {
+func (h *handlerImpl) Login(ctx *api_context.ApiRequestContext[*request.ApiContext]) {
 	server.GetRequestBody(ctx, models.User{}, h.checkUserCredentials, server.FailedToLoadBody)
 }
 
-func (h *handlerImpl) checkUserCredentials(ctx *server.ApiRequestContext, userInput models.User) {
+func (h *handlerImpl) checkUserCredentials(ctx *api_context.ApiRequestContext[*request.ApiContext], userInput models.User) {
 	decrypt, err := sec.Decrypt(userInput.Password, []byte(sec.SampleEncryptKey))
 
 	if err != nil {
@@ -32,7 +35,7 @@ func (h *handlerImpl) checkUserCredentials(ctx *server.ApiRequestContext, userIn
 			return
 		}
 		ctx.InternalServerError("Internal Server Error")
-		log.Printf("[%s]:: find user by username or email failed: %v", ctx.GetSessionId(), err)
+		log.Printf("[%s]:: find user_service by username or email failed: %v", ctx.GetSessionId(), err)
 
 		return
 	}
@@ -43,7 +46,7 @@ func (h *handlerImpl) checkUserCredentials(ctx *server.ApiRequestContext, userIn
 	}
 
 	// Generate JWT and respond
-	tokenData, err := h.ApiSecurityService().GenerateJWT(*userResponse)
+	tokenData, err := h.ApiSecurityService().GenerateJWT(ctx.RequestData, time.Minute*10)
 	if err != nil {
 		log.Printf("[%s]:: generating new jwt failed: %v", ctx.GetSessionId(), err)
 		ctx.InternalServerError("Error generating token")

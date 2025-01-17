@@ -1,22 +1,37 @@
-package user
+package user_service
 
 import (
+	"github.com/softwareplace/http-utils/api_context"
 	repo "github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 	"github.com/softwareplace/wireguard-api/pkg/utils/file"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
 	"log"
+	"net/http"
 )
 
 type Service interface {
 	Init()
+	LoadUserRoles(ctx api_context.ApiRequestContext[*request.ApiContext]) []string
 }
 
 type serviceImpl struct {
 	appEnv     env.ApplicationEnv
 	repository repo.UsersRepository
+}
+
+func (s *serviceImpl) LoadUserRoles(ctx api_context.ApiRequestContext[*request.ApiContext]) []string {
+	user, err := s.repository.FindUserBySalt(ctx.RequestData.AccessId)
+	if err != nil {
+		log.Printf("[%s]:: error finding user_service: %v", ctx.GetSessionId(), err)
+		ctx.Error("Error finding user_service in the database", http.StatusInternalServerError)
+		return nil
+	}
+	ctx.RequestData.User = user
+	return user.Roles
 }
 
 func GetService() Service {
