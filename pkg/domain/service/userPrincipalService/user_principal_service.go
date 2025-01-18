@@ -27,7 +27,7 @@ func New() principal.PService[*request.ApiContext] {
 }
 
 func (u *UserPrincipalService) LoadPrincipal(ctx *api_context.ApiRequestContext[*request.ApiContext]) bool {
-	userResponse, err := u.userRepository.FindUserBySalt(ctx.Principal.GetSalt())
+	userResponse, err := u.userRepository.FindUserBySalt(ctx.AccessId)
 	if err != nil {
 		return false
 	}
