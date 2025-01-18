@@ -1,6 +1,7 @@
 package env
 
 import (
+	"log"
 	"os"
 )
 
@@ -34,7 +35,12 @@ type DBEnv struct {
 var appEnv *ApplicationEnv
 
 func AppEnv() ApplicationEnv {
+	if os.Getenv("DEBUG_MODE") == "true" {
+		log.SetFlags(log.LstdFlags | log.Llongfile)
+	}
+
 	if appEnv == nil {
+
 		dbEnv := DBEnv{
 			DatabaseName: GetRequiredEnv("MONGO_DATABASE"), // required
 			Username:     GetRequiredEnv("MONGO_USERNAME"), // required

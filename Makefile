@@ -10,6 +10,7 @@ ENV = ./dev/.env
 up:
 	@$(DOCKER_COMPOSE) --env-file $(ENV) --project-name private-network -f $(DOCKER_COMPOSE_FILE) up -d
 	@echo "Docker services are now running."
+	@make logs
 
 # Stop all running services
 down:
@@ -28,7 +29,7 @@ rebuild:
 
 # Show logs from Docker Compose services
 logs:
-	@$(DOCKER_COMPOSE) --project-name wireguard-api -f $(DOCKER_COMPOSE_FILE) logs -f
+	@docker logs -f wireguard-api
 
 # Clean up dangling images, stopped containers, and unused networks
 clean:

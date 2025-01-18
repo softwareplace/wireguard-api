@@ -18,6 +18,7 @@ The application reads its configuration from the following environment variables
 | `CONTEXT_PATH`             | The base path used for API routing.                                     | `/api/private-network/v1/` | No        |
 | `PEERS_RESOURCE_PATH`      | Filesystem path for peer resource connections.                          | `/etc/wireguard/`          | No        |
 | `API_INIT_FILE`            | Add the first user data that will be created at the application startup | N/A                        | No        |
+| `DEBUG_MODE`               | Set `log.SetFlags(log.LstdFlags \| log.Llongfile)`                      | N/A                        | No        |
 
 ### Database Configuration (`DBEnv`)
 

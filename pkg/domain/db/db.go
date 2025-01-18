@@ -8,9 +8,10 @@ import (
 	"log"
 )
 
-var dbEnv = env.AppEnv().DBEnv
+var dbEnv env.DBEnv
 
 func InitMongoDB() {
+	dbEnv = env.AppEnv().DBEnv
 	connectionChecker()
 	GetDB()
 }
