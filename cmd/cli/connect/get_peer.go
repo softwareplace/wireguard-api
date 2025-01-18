@@ -1,8 +1,8 @@
 package connect
 
 import (
+	"github.com/softwareplace/http-utils/api_context"
 	"github.com/softwareplace/http-utils/request"
-	httputilsserver "github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"log"
@@ -14,7 +14,7 @@ func GetPeer(profile *spec.Profile, server *spec.Server) models.Peer {
 
 	apiConfig := request.Build(server.Host).
 		WithPath("/peers").
-		WithHeader(httputilsserver.XApiKey, server.ApiKey).
+		WithHeader(api_context.XApiKey, server.ApiKey).
 		WithHeader("Authorization", profile.AuthorizationKey).
 		WithExpectedStatusCode(http.StatusOK)
 

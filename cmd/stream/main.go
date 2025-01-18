@@ -53,7 +53,7 @@ func main() {
 		WithHeader("Authorization", streamEnv.Authorization).
 		WithHeader(api_context.XApiKey, streamEnv.ApiKey).
 		WithBody(dump).
-		WithExpectedStatusCode(http.StatusCreated)
+		WithExpectedStatusCode(http.StatusOK)
 
 	_, err = api.Post(config)
 	if err != nil {
