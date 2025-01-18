@@ -45,6 +45,7 @@ func (h *handlerImpl) checkUserCredentials(ctx *api_context.ApiRequestContext[*r
 		return
 	}
 
+	ctx.RequestData.User = userResponse
 	// Generate JWT and respond
 	tokenData, err := h.ApiSecurityService().GenerateJWT(ctx.RequestData, time.Minute*10)
 	if err != nil {

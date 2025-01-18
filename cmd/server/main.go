@@ -16,9 +16,9 @@ import (
 
 func main() {
 	appEnv := env.AppEnv()
-	db.InitMongoDB()
 	service := user_service.GetService()
 	userAuthenticationUserHandler := user_handler.GetAuthenticationUserHandler(&service)
+
 	api := server.New[*request.ApiContext](
 		request.ContextBuilder,
 		userAuthenticationUserHandler.Handler,
@@ -28,6 +28,9 @@ func main() {
 	securityService := security.GetApiSecurityService[*request.ApiContext](appEnv.ApiSecretAuthorization)
 	auth.Handler(appEnv.ApiSecretKey, secretService.GetKey, &securityService, api)
 	handlers.Init(api)
+
+	db.InitMongoDB()
+
 	peer.GetService().Load()
 	service.Init()
 	api.StartServer()

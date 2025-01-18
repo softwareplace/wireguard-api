@@ -26,6 +26,8 @@ github.com/softwareplace/http-utils v0.0.0-20250117224835-13ee112340a6 h1:uxMnbp
 github.com/softwareplace/http-utils v0.0.0-20250117224835-13ee112340a6/go.mod h1:5o/vgMsC67X2DChcdR76qm8yyjkIKmSFHudNeaK060U=
 github.com/softwareplace/http-utils v0.0.0-20250117231145-c67f294855cd h1:NTHsh5xr4DlIGwaNrEuq7vREYryGPZol7qFYsQgPl8s=
 github.com/softwareplace/http-utils v0.0.0-20250117231145-c67f294855cd/go.mod h1:5o/vgMsC67X2DChcdR76qm8yyjkIKmSFHudNeaK060U=
+github.com/softwareplace/http-utils v0.0.0-20250118003817-f2b4ec9b8676 h1:pTZv6az0E/CQBbVXUROyWQjdaFyamMMkz2YYvRf9CmI=
+github.com/softwareplace/http-utils v0.0.0-20250118003817-f2b4ec9b8676/go.mod h1:5o/vgMsC67X2DChcdR76qm8yyjkIKmSFHudNeaK060U=
 github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.1.2 h1:FHX5I5B4i4hKRVRBCFRxq1iQRej7WO3hhBuJf+UUySY=

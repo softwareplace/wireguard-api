@@ -98,7 +98,7 @@ func main() {
 			Bytes: publicKeyBytes,
 		})
 
-		encryptedKey, err := security.GetApiSecurityService[api_context.DefaultContext](appEnv.ApiSecretAuthorization).Encrypt(string(publicKeyPEM))
+		encryptedKey, err := security.GetApiSecurityService[*api_context.DefaultContext](appEnv.ApiSecretAuthorization).Encrypt(string(publicKeyPEM))
 
 		if err != nil {
 			log.Fatalf("Failed to sec public key: %s", err)
@@ -120,13 +120,14 @@ func main() {
 			return
 		}
 
+		expirationToken := time.Hour * (time.Duration(*expirationHours))
 		apiJWTInfo := security.ApiJWTInfo{
 			Client:     *clientInfo,
-			Expiration: time.Duration(*expirationHours),
+			Expiration: expirationToken,
 			Key:        *id,
 		}
 
-		apiSecretJWT, err := security.GetApiSecurityService[api_context.DefaultContext](appEnv.ApiSecretAuthorization).GenerateApiSecretJWT(apiJWTInfo)
+		apiSecretJWT, err := security.GetApiSecurityService[*api_context.DefaultContext](appEnv.ApiSecretAuthorization).GenerateApiSecretJWT(apiJWTInfo)
 
 		if err != nil {
 			return

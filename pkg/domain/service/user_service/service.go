@@ -11,7 +11,6 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
 	"log"
-	"net/http"
 )
 
 type Service interface {
@@ -26,14 +25,17 @@ type serviceImpl struct {
 }
 
 func (s *serviceImpl) LoadUserRoles(ctx api_context.ApiRequestContext[*request.ApiContext]) []string {
-	user, err := s.repository.FindUserBySalt(ctx.RequestData.Salt())
-	if err != nil {
-		log.Printf("[%s]:: error finding user: %v", ctx.GetSessionId(), err)
-		ctx.Error("Error finding user in the database", http.StatusInternalServerError)
-		return nil
+	if s.securityService.ExtractJWTClaims(ctx) {
+		user, err := s.repository.FindUserBySalt(ctx.RequestData.AccessId)
+		if err != nil {
+			log.Printf("[%s]:: error finding user: %v", ctx.GetSessionId(), err)
+			return nil
+		}
+		ctx.RequestData.User = user
+		return user.Roles
 	}
-	ctx.RequestData.User = user
-	return user.Roles
+
+	return nil
 }
 
 func GetService() Service {
