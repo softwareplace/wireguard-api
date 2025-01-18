@@ -80,7 +80,7 @@ func (ctx *ApiContext) SetAccessId(accessId string) {
 	ctx.AccessId = accessId
 }
 
-func (ctx *ApiContext) SetRoles(roles []string) {
+func (ctx *ApiContext) SetRoles([]string) {
 }
 
 func ContextBuilder(ctx *api_context.ApiRequestContext[*ApiContext]) bool {

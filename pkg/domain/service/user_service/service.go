@@ -2,6 +2,7 @@ package user_service
 
 import (
 	"github.com/softwareplace/http-utils/api_context"
+	"github.com/softwareplace/http-utils/security"
 	repo "github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
@@ -19,12 +20,13 @@ type Service interface {
 }
 
 type serviceImpl struct {
-	appEnv     env.ApplicationEnv
-	repository repo.UsersRepository
+	appEnv          env.ApplicationEnv
+	repository      repo.UsersRepository
+	securityService security.ApiSecurityService[*request.ApiContext]
 }
 
 func (s *serviceImpl) LoadUserRoles(ctx api_context.ApiRequestContext[*request.ApiContext]) []string {
-	user, err := s.repository.FindUserBySalt(ctx.RequestData.AccessId)
+	user, err := s.repository.FindUserBySalt(ctx.RequestData.Salt())
 	if err != nil {
 		log.Printf("[%s]:: error finding user: %v", ctx.GetSessionId(), err)
 		ctx.Error("Error finding user in the database", http.StatusInternalServerError)
@@ -36,8 +38,9 @@ func (s *serviceImpl) LoadUserRoles(ctx api_context.ApiRequestContext[*request.A
 
 func GetService() Service {
 	return &serviceImpl{
-		appEnv:     env.AppEnv(),
-		repository: repo.Repository(),
+		appEnv:          env.AppEnv(),
+		repository:      repo.Repository(),
+		securityService: security.GetApiSecurityService[*request.ApiContext](env.AppEnv().ApiSecretAuthorization),
 	}
 }
 
