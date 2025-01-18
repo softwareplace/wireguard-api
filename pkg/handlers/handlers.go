@@ -7,7 +7,7 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/handlers/user"
 )
 
-func Init(api *server.ApiRouterHandler[*request.ApiContext]) {
+func Init(api server.ApiRouterHandler[*request.ApiContext]) {
 	user.Init(api)
 	peer.Init(api)
 }

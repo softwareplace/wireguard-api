@@ -57,7 +57,7 @@ func (ctx *ApiContext) GetRoles() (roles []string, err error) {
 	if user != nil && len(user.Roles) > 0 {
 		return user.Roles, nil
 	}
-	return nil, fmt.Errorf("user_service roles not found")
+	return nil, fmt.Errorf("user roles not found")
 }
 
 func (ctx *ApiContext) SetUser(user *models.User) {

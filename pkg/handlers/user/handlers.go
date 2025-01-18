@@ -29,10 +29,10 @@ func (h *handlerImpl) ApiSecurityService() security.ApiSecurityService[*request.
 	return security.GetApiSecurityService[*request.ApiContext](env.AppEnv().ApiSecretAuthorization)
 }
 
-func Init(api *server.ApiRouterHandler[*request.ApiContext]) {
+func Init(api server.ApiRouterHandler[*request.ApiContext]) {
 	handler := handlerImpl{}
-	(*api).PublicRouter(handler.Login, "login", "POST")
-	(*api).Post(handler.CreateUser, "user", "POST", "resource:users:create:user")
-	(*api).Put(handler.UpdateUser, "user/:id", "resource:users:update:user")
-	(*api).Put(handler.UpdateUser, "user")
+	api.PublicRouter(handler.Login, "login", "POST")
+	api.Post(handler.CreateUser, "user", "POST", "resource:users:create:user")
+	api.Put(handler.UpdateUser, "user/:id", "resource:users:update:user")
+	api.Put(handler.UpdateUser, "user")
 }

@@ -35,7 +35,7 @@ func (h *handlerImpl) checkUserCredentials(ctx *api_context.ApiRequestContext[*r
 			return
 		}
 		ctx.InternalServerError("Internal Server Error")
-		log.Printf("[%s]:: find user_service by username or email failed: %v", ctx.GetSessionId(), err)
+		log.Printf("[%s]:: find user by username or email failed: %v", ctx.GetSessionId(), err)
 
 		return
 	}

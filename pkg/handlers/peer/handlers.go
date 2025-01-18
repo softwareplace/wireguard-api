@@ -23,8 +23,8 @@ func (h *handlerImpl) Service() peer.Service {
 	return peer.GetService()
 }
 
-func Init(api *server.ApiRouterHandler[*request.ApiContext]) {
+func Init(api server.ApiRouterHandler[*request.ApiContext]) {
 	handler := GetHandler()
-	(*api).Get(handler.GetAvailablePeer, "peers", "resource:peers:get:peer")
-	(*api).Post(handler.Stream, "peers/stream", "resource:peers:stream:peers")
+	api.Get(handler.GetAvailablePeer, "peers", "resource:peers:get:peer")
+	api.Post(handler.Stream, "peers/stream", "resource:peers:stream:peers")
 }

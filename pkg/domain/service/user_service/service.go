@@ -26,8 +26,8 @@ type serviceImpl struct {
 func (s *serviceImpl) LoadUserRoles(ctx api_context.ApiRequestContext[*request.ApiContext]) []string {
 	user, err := s.repository.FindUserBySalt(ctx.RequestData.AccessId)
 	if err != nil {
-		log.Printf("[%s]:: error finding user_service: %v", ctx.GetSessionId(), err)
-		ctx.Error("Error finding user_service in the database", http.StatusInternalServerError)
+		log.Printf("[%s]:: error finding user: %v", ctx.GetSessionId(), err)
+		ctx.Error("Error finding user in the database", http.StatusInternalServerError)
 		return nil
 	}
 	ctx.RequestData.User = user

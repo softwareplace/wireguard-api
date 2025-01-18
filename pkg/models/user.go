@@ -4,7 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// User represents a user_service object
+// User represents a user object
 type User struct {
 	Id        primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
 	Username  string             `json:"username" yaml:"username"`

@@ -43,11 +43,11 @@ func (h *handlerImpl) validateUserFields(ctx *api_context.ApiRequestContext[*req
 	user.Status = "ACTIVE"
 
 	if err := h.UsersRepository().Save(user); err != nil {
-		log.Printf("[%s]:: error saving user_service to the database: %v", ctx.GetSessionId(), err)
-		ctx.Error("Error saving user_service to the database", http.StatusInternalServerError)
+		log.Printf("[%s]:: error saving user to the database: %v", ctx.GetSessionId(), err)
+		ctx.Error("Error saving user to the database", http.StatusInternalServerError)
 		return
 	}
 
-	log.Printf("[%s]:: user_service created successfully", ctx.GetSessionId())
+	log.Printf("[%s]:: user created successfully", ctx.GetSessionId())
 	ctx.Created(map[string]interface{}{"message": "User created successfully"})
 }

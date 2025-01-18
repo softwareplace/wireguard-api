@@ -18,9 +18,9 @@ func (h *handlerImpl) useUpdateValidation(ctx *api_context.ApiRequestContext[*re
 	currentUser, err := h.UsersRepository().FindUserBySalt(ctx.RequestData.AccessId)
 
 	if err != nil {
-		log.Printf("[%s]:: find user_service by salt failed: %v", ctx.GetSessionId(), err)
+		log.Printf("[%s]:: find user by salt failed: %v", ctx.GetSessionId(), err)
 
-		ctx.Error("Error finding user_service in the database", http.StatusInternalServerError)
+		ctx.Error("Error finding user in the database", http.StatusInternalServerError)
 		return
 	}
 
@@ -36,14 +36,14 @@ func (h *handlerImpl) useUpdateValidation(ctx *api_context.ApiRequestContext[*re
 		}
 	}
 
-	// Save updated user_service to database
+	// Save updated user to database
 	err = h.UsersRepository().Update(*currentUser)
 
 	if err != nil {
-		log.Printf("[%s]:: updateing user_service failed: %v", ctx.GetSessionId(), err)
-		ctx.Error("Error updating user_service in the database", http.StatusInternalServerError)
+		log.Printf("[%s]:: updateing user failed: %v", ctx.GetSessionId(), err)
+		ctx.Error("Error updating user in the database", http.StatusInternalServerError)
 		return
 	}
-	log.Printf("[%s]:: user_service successfully updated", ctx.GetSessionId())
+	log.Printf("[%s]:: user successfully updated", ctx.GetSessionId())
 	ctx.Ok(map[string]interface{}{"message": "User updated successfully"})
 }
