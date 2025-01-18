@@ -22,7 +22,7 @@ func (h *handlerImpl) validateUserFields(ctx *api_context.ApiRequestContext[*req
 		return
 	}
 
-	_, err := h.UsersRepository().FindUserByUsernameOrEmail(user.Username, user.Email)
+	_, err := (*h.UsersRepository()).FindUserByUsernameOrEmail(user.Username, user.Email)
 
 	if err == nil {
 		log.Printf("[%s]:: username or email already exists: %v", ctx.GetSessionId(), err)
@@ -42,7 +42,7 @@ func (h *handlerImpl) validateUserFields(ctx *api_context.ApiRequestContext[*req
 	user.Salt = salt
 	user.Status = "ACTIVE"
 
-	if err := h.UsersRepository().Save(user); err != nil {
+	if err := (*h.UsersRepository()).Save(user); err != nil {
 		log.Printf("[%s]:: error saving user to the database: %v", ctx.GetSessionId(), err)
 		ctx.Error("Error saving user to the database", http.StatusInternalServerError)
 		return

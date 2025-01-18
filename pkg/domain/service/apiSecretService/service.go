@@ -1,4 +1,4 @@
-package api_secret_service
+package apiSecretService
 
 import (
 	"github.com/softwareplace/http-utils/api_context"
@@ -21,7 +21,7 @@ func GetService() ApiSecretService {
 }
 
 func (s *serviceImpl) GetKey(ctx *api_context.ApiRequestContext[*request.ApiContext]) (string, error) {
-	apiSecret, err := s.repository.GetById(ctx.RequestData.ApiKeyId)
+	apiSecret, err := s.repository.GetById(ctx.ApiKeyId)
 	if err != nil {
 		return "", err
 	}

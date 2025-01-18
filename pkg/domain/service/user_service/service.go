@@ -1,10 +1,7 @@
 package user_service
 
 import (
-	"github.com/softwareplace/http-utils/api_context"
-	"github.com/softwareplace/http-utils/security"
 	repo "github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 	"github.com/softwareplace/wireguard-api/pkg/utils/file"
@@ -15,34 +12,17 @@ import (
 
 type Service interface {
 	Init()
-	LoadUserRoles(ctx api_context.ApiRequestContext[*request.ApiContext]) []string
 }
 
 type serviceImpl struct {
-	appEnv          env.ApplicationEnv
-	repository      repo.UsersRepository
-	securityService security.ApiSecurityService[*request.ApiContext]
-}
-
-func (s *serviceImpl) LoadUserRoles(ctx api_context.ApiRequestContext[*request.ApiContext]) []string {
-	if s.securityService.ExtractJWTClaims(ctx) {
-		user, err := s.repository.FindUserBySalt(ctx.RequestData.AccessId)
-		if err != nil {
-			log.Printf("[%s]:: error finding user: %v", ctx.GetSessionId(), err)
-			return nil
-		}
-		ctx.RequestData.User = user
-		return user.Roles
-	}
-
-	return nil
+	appEnv     env.ApplicationEnv
+	repository *repo.UsersRepository
 }
 
 func GetService() Service {
 	return &serviceImpl{
-		appEnv:          env.AppEnv(),
-		repository:      repo.Repository(),
-		securityService: security.GetApiSecurityService[*request.ApiContext](env.AppEnv().ApiSecretAuthorization),
+		appEnv:     env.AppEnv(),
+		repository: repo.Repository(),
 	}
 }
 
@@ -63,7 +43,7 @@ func (s *serviceImpl) Init() {
 			log.Fatalf("Failed to validate init user data: %v", err)
 		}
 
-		_, err = s.repository.FindUserByUsernameOrEmail(initUserData.Username, initUserData.Email)
+		_, err = (*s.repository).FindUserByUsernameOrEmail(initUserData.Username, initUserData.Email)
 
 		if err == nil {
 			return
@@ -79,7 +59,7 @@ func (s *serviceImpl) Init() {
 		initUserData.Salt = salt
 		initUserData.Status = "ACTIVE"
 
-		err = s.repository.Save(initUserData)
+		err = (*s.repository).Save(initUserData)
 
 		if err != nil {
 			log.Fatalf("Failed to save init user data: %v", err)

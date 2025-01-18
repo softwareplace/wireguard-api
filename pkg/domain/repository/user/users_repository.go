@@ -4,6 +4,7 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/domain/db"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"go.mongodb.org/mongo-driver/mongo"
+	"sync"
 )
 
 type UsersRepository interface {
@@ -23,8 +24,16 @@ func (r *usersRepositoryImpl) collection() *mongo.Collection {
 	return r.database.Collection("users")
 }
 
-func Repository() UsersRepository {
-	return &usersRepositoryImpl{
-		database: db.GetDB(),
-	}
+var (
+	repository UsersRepository
+	once       sync.Once
+)
+
+func Repository() *UsersRepository {
+	once.Do(func() {
+		repository = &usersRepositoryImpl{
+			database: db.GetDB(),
+		}
+	})
+	return &repository
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 )
 
 type Handler interface {
@@ -21,17 +20,12 @@ type Handler interface {
 type handlerImpl struct {
 }
 
-func (h *handlerImpl) UsersRepository() user.UsersRepository {
+func (h *handlerImpl) UsersRepository() *user.UsersRepository {
 	return user.Repository()
-}
-
-func (h *handlerImpl) ApiSecurityService() security.ApiSecurityService[*request.ApiContext] {
-	return security.GetApiSecurityService[*request.ApiContext](env.AppEnv().ApiSecretAuthorization)
 }
 
 func Init(api server.ApiRouterHandler[*request.ApiContext]) {
 	handler := handlerImpl{}
-	api.PublicRouter(handler.Login, "login", "POST")
 	api.Post(handler.CreateUser, "user", "POST", "resource:users:create:user")
 	api.Put(handler.UpdateUser, "user/:id", "resource:users:update:user")
 	api.Put(handler.UpdateUser, "user")

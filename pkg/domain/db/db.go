@@ -6,18 +6,26 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"sync"
 )
 
-var dbEnv env.DBEnv
+var (
+	dbEnv env.DBEnv
+	once  sync.Once
+	db    *mongo.Database
+)
+
+func GetDB() *mongo.Database {
+	once.Do(func() {
+		db = GetDBClient().Database(dbEnv.DatabaseName)
+	})
+	return db
+}
 
 func InitMongoDB() {
 	dbEnv = env.AppEnv().DBEnv
 	connectionChecker()
 	GetDB()
-}
-
-func GetDB() *mongo.Database {
-	return GetDBClient().Database(dbEnv.DatabaseName)
 }
 
 func GetDBClient() *mongo.Client {

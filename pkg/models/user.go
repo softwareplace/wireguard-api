@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -21,4 +22,14 @@ type UserUpdate struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email    string `json:"email"`
+}
+
+func (user *User) Parse() *request.UserPrincipal {
+	return &request.UserPrincipal{
+		Username: user.Username,
+		Email:    user.Email,
+		Salt:     user.Salt,
+		Roles:    user.Roles,
+		Status:   user.Status,
+	}
 }
