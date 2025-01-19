@@ -15,7 +15,7 @@ func (h *handlerImpl) UpdateUser(ctx *api_context.ApiRequestContext[*request.Api
 }
 
 func (h *handlerImpl) useUpdateValidation(ctx *api_context.ApiRequestContext[*request.ApiContext], updatedUser models.UserUpdate) {
-	currentUser, err := (*h.UsersRepository()).FindUserBySalt(ctx.AccessId)
+	currentUser, err := h.UsersRepository().FindUserBySalt(ctx.AccessId)
 
 	if err != nil {
 		log.Printf("[%s]:: find user by salt failed: %v", ctx.GetSessionId(), err)
@@ -37,7 +37,7 @@ func (h *handlerImpl) useUpdateValidation(ctx *api_context.ApiRequestContext[*re
 	}
 
 	// Save updated user to database
-	err = (*h.UsersRepository()).Update(*currentUser)
+	err = h.UsersRepository().Update(*currentUser)
 
 	if err != nil {
 		log.Printf("[%s]:: updateing user failed: %v", ctx.GetSessionId(), err)

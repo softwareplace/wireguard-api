@@ -25,15 +25,15 @@ func (r *usersRepositoryImpl) collection() *mongo.Collection {
 }
 
 var (
-	repository UsersRepository
-	once       sync.Once
+	repositoryInstance UsersRepository
+	repositoryOnce     sync.Once
 )
 
-func Repository() *UsersRepository {
-	once.Do(func() {
-		repository = &usersRepositoryImpl{
+func Repository() UsersRepository {
+	repositoryOnce.Do(func() {
+		repositoryInstance = &usersRepositoryImpl{
 			database: db.GetDB(),
 		}
 	})
-	return &repository
+	return repositoryInstance
 }

@@ -13,17 +13,17 @@ type UserPrincipalService struct {
 }
 
 var (
-	once    sync.Once
-	service principal.PService[*request.ApiContext]
+	userPrincipalServiceOnce     sync.Once
+	userPrincipalServiceInstance principal.PService[*request.ApiContext]
 )
 
-func New() principal.PService[*request.ApiContext] {
-	once.Do(func() {
-		service = &UserPrincipalService{
-			userRepository: *user.Repository(),
+func GetUserPrincipalService() principal.PService[*request.ApiContext] {
+	userPrincipalServiceOnce.Do(func() {
+		userPrincipalServiceInstance = &UserPrincipalService{
+			userRepository: user.Repository(),
 		}
 	})
-	return service
+	return userPrincipalServiceInstance
 }
 
 func (u *UserPrincipalService) LoadPrincipal(ctx *api_context.ApiRequestContext[*request.ApiContext]) bool {
@@ -32,9 +32,7 @@ func (u *UserPrincipalService) LoadPrincipal(ctx *api_context.ApiRequestContext[
 		return false
 	}
 
-	ctx.Principal = &request.ApiContext{
-		User: userResponse.Parse(),
-	}
-
+	context := request.NewApiContext(userResponse.Parse())
+	ctx.Principal = &context
 	return true
 }

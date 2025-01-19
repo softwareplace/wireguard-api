@@ -20,7 +20,7 @@ type Handler interface {
 type handlerImpl struct {
 }
 
-func (h *handlerImpl) UsersRepository() *user.UsersRepository {
+func (h *handlerImpl) UsersRepository() user.UsersRepository {
 	return user.Repository()
 }
 

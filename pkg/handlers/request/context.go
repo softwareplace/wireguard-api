@@ -16,6 +16,12 @@ type ApiContext struct {
 	ApiKeyClaims        map[string]interface{}
 }
 
+func NewApiContext(user *UserPrincipal) *ApiContext {
+	return &ApiContext{
+		User: user,
+	}
+}
+
 func (ctx *ApiContext) GetSalt() string {
 	return ctx.User.Salt
 }

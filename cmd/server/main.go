@@ -13,30 +13,41 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 )
 
+var (
+	userService          user_service.Service
+	securityService      security.ApiSecurityService[*request.ApiContext]
+	secreteAccessHandler security.ApiSecretAccessHandler[*request.ApiContext]
+	userLoginService     server.LoginService[*request.ApiContext]
+)
+
+func factory(appEnv env.ApplicationEnv) {
+	userService = user_service.GetService()
+	secretKeyProvider := apiSecretService.GetSecretKeyProvider()
+	principalService := userPrincipalService.GetUserPrincipalService()
+	securityService = security.ApiSecurityServiceBuild(appEnv.ApiSecretAuthorization, principalService)
+
+	secreteAccessHandler = security.ApiSecretAccessHandlerBuild(
+		appEnv.ApiSecretKey,
+		secretKeyProvider,
+		securityService,
+	)
+	userLoginService = user_service.GetLoginService(securityService)
+}
+
 func main() {
 	appEnv := env.AppEnv()
 	db.InitMongoDB()
 
-	userService := user_service.GetService()
-	principalService := userPrincipalService.New()
-	secretService := apiSecretService.GetService()
-
-	securityService := security.ApiSecurityServiceBuild(appEnv.ApiSecretAuthorization, &principalService)
-	secreteAccessHandler := security.ApiSecretAccessHandlerBuild(
-		appEnv.ApiSecretKey,
-		secretService.GetKey,
-		securityService,
-	)
-
-	userLoginService := user_service.New(securityService)
+	factory(appEnv)
 
 	api := server.CreateApiRouter[*request.ApiContext]().
 		RegisterMiddleware(secreteAccessHandler.HandlerSecretAccess, security.ApiSecretAccessHandlerName).
 		RegisterMiddleware(securityService.AuthorizationHandler, security.ApiSecurityHandlerName).
-		WithLoginResource(&userLoginService)
+		WithLoginResource(userLoginService)
 
 	handlers.Init(api)
 	userService.Init()
 	peer.GetService().Load()
+
 	api.StartServer()
 }

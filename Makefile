@@ -8,7 +8,7 @@ ENV = ./dev/.env
 
 # Start all services in detached mode
 up:
-	@$(DOCKER_COMPOSE) --env-file $(ENV) --project-name private-network -f $(DOCKER_COMPOSE_FILE) up -d
+	@$(DOCKER_COMPOSE) --env-file $(ENV) --project-name private-network -f $(DOCKER_COMPOSE_FILE) up --build -d
 	@echo "Docker services are now running."
 	@make logs
 

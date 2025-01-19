@@ -10,16 +10,17 @@ import (
 )
 
 var (
-	dbEnv env.DBEnv
-	once  sync.Once
-	db    *mongo.Database
+	dbEnv           env.DBEnv
+	mongoDbOnce     sync.Once
+	mongoDbInstance *mongo.Database
 )
 
 func GetDB() *mongo.Database {
-	once.Do(func() {
-		db = GetDBClient().Database(dbEnv.DatabaseName)
+	dbEnv = env.AppEnv().DBEnv
+	mongoDbOnce.Do(func() {
+		mongoDbInstance = GetDBClient().Database(dbEnv.DatabaseName)
 	})
-	return db
+	return mongoDbInstance
 }
 
 func InitMongoDB() {
