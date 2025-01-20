@@ -30,6 +30,7 @@ services:
       - ${PEERS_RESOURCE_PATH}:/etc/wireguard
       - ${API_SECRET_PATH}:/etc/secret
     environment:
+      - CONTEXT_PATH=${CONTEXT_PATH}
       - API_SECRET_KEY=${API_SECRET_KEY}
       - MONGO_URI=${MONGO_URI}
       - MONGO_USERNAME=${MONGO_INITDB_ROOT_USERNAME}

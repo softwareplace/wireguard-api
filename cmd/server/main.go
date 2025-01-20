@@ -1,24 +1,53 @@
 package main
 
 import (
+	"github.com/softwareplace/http-utils/security"
 	"github.com/softwareplace/http-utils/server"
-	"github.com/softwareplace/wireguard-api/pkg/auth"
 	"github.com/softwareplace/wireguard-api/pkg/domain/db"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/apiSecretService"
 	"github.com/softwareplace/wireguard-api/pkg/domain/service/peer"
-	"github.com/softwareplace/wireguard-api/pkg/domain/service/user"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/userPrincipalService"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/user_service"
 	"github.com/softwareplace/wireguard-api/pkg/handlers"
 	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
+	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 )
 
+var (
+	userService          user_service.Service
+	securityService      security.ApiSecurityService[*request.ApiContext]
+	secreteAccessHandler security.ApiSecretAccessHandler[*request.ApiContext]
+	userLoginService     server.LoginService[*request.ApiContext]
+)
+
+func factory(appEnv env.ApplicationEnv) {
+	userService = user_service.GetService()
+	secretKeyProvider := apiSecretService.GetSecretKeyProvider()
+	principalService := userPrincipalService.GetUserPrincipalService()
+	securityService = security.ApiSecurityServiceBuild(appEnv.ApiSecretAuthorization, principalService)
+
+	secreteAccessHandler = security.ApiSecretAccessHandlerBuild(
+		appEnv.ApiSecretKey,
+		secretKeyProvider,
+		securityService,
+	)
+	userLoginService = user_service.GetLoginService(securityService)
+}
+
 func main() {
+	appEnv := env.AppEnv()
 	db.InitMongoDB()
-	api := server.New()
-	api.Router().Use(request.ContextBuilder)
-	handler := auth.NewApiSecurityHandler()
-	api.Router().Use(handler.Middleware)
-	api.Router().Use(auth.AccessValidation)
+
+	factory(appEnv)
+
+	api := server.CreateApiRouter[*request.ApiContext]().
+		RegisterMiddleware(secreteAccessHandler.HandlerSecretAccess, security.ApiSecretAccessHandlerName).
+		RegisterMiddleware(securityService.AuthorizationHandler, security.ApiSecurityHandlerName).
+		WithLoginResource(userLoginService)
+
 	handlers.Init(api)
+	userService.Init()
 	peer.GetService().Load()
-	user.GetService().Init()
+
 	api.StartServer()
 }

@@ -1,4 +1,4 @@
-package user
+package user_service
 
 import (
 	repo "github.com/softwareplace/wireguard-api/pkg/domain/repository/user"
@@ -8,6 +8,7 @@ import (
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/validator"
 	"log"
+	"sync"
 )
 
 type Service interface {
@@ -19,11 +20,19 @@ type serviceImpl struct {
 	repository repo.UsersRepository
 }
 
+var (
+	serviceOnce     sync.Once
+	serviceInstance Service
+)
+
 func GetService() Service {
-	return &serviceImpl{
-		appEnv:     env.AppEnv(),
-		repository: repo.Repository(),
-	}
+	serviceOnce.Do(func() {
+		serviceInstance = &serviceImpl{
+			appEnv:     env.AppEnv(),
+			repository: repo.Repository(),
+		}
+	})
+	return serviceInstance
 }
 
 type userInit struct {

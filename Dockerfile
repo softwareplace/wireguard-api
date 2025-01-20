@@ -7,6 +7,7 @@ ARG PORT
 ENV PORT=$PORT
 
 # Copy the built app from the builder stage
+COPY ./.temp/wireguard-tools /bin/wireguard-api
 COPY ./.temp/wireguard-api /bin/wireguard-api
 COPY ./.temp/api-key-generator /bin/api-key-generator
 

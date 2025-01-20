@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/softwareplace/http-utils/api_context"
+	"github.com/softwareplace/http-utils/request"
 	"github.com/softwareplace/wireguard-api/cmd/stream/parse"
 	"github.com/softwareplace/wireguard-api/cmd/stream/spec"
-	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
-	"github.com/softwareplace/wireguard-api/pkg/http_api"
 	"go/types"
 	"log"
 	"net/http"
@@ -47,13 +47,13 @@ func main() {
 	//fmt.Println("Dump as JSON:")
 	//fmt.Println(string(jsonDump))
 
-	api := http_api.NewApi(types.Nil{})
-	config := http_api.Config(streamEnv.Server).
+	api := request.NewApi(types.Nil{})
+	config := request.Build(streamEnv.Server).
 		WithPath("peers/stream").
 		WithHeader("Authorization", streamEnv.Authorization).
-		WithHeader(request.XApiKey, streamEnv.ApiKey).
+		WithHeader(api_context.XApiKey, streamEnv.ApiKey).
 		WithBody(dump).
-		WithExpectedStatusCode(http.StatusCreated)
+		WithExpectedStatusCode(http.StatusOK)
 
 	_, err = api.Post(config)
 	if err != nil {

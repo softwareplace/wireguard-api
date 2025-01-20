@@ -1,7 +1,9 @@
 package env
 
 import (
+	"log"
 	"os"
+	"sync"
 )
 
 type ApplicationEnv struct {
@@ -31,28 +33,39 @@ type DBEnv struct {
 	Uri string
 }
 
-var appEnv *ApplicationEnv
+var (
+	instance   *ApplicationEnv
+	appEnvOnce sync.Once
+)
 
 func AppEnv() ApplicationEnv {
-	if appEnv == nil {
-		dbEnv := DBEnv{
-			DatabaseName: GetRequiredEnv("MONGO_DATABASE"), // required
-			Username:     GetRequiredEnv("MONGO_USERNAME"), // required
-			Password:     GetRequiredEnv("MONGO_PASSWORD"), // required
-			Uri:          GetRequiredEnv("MONGO_URI"),      // required
-		}
-
-		appEnv = &ApplicationEnv{
-			ApiSecretAuthorization: GetRequiredEnv("API_SECRET_AUTHORIZATION"), // required
-			Port:                   getServerPort(),
-			ContextPath:            getServerContextPath(),
-			PeerResourcePath:       getPeerResourcePath(),
-			ApiSecretKey:           GetRequiredEnv("API_SECRET_KEY"),
-			InitFilePath:           os.Getenv("API_INIT_FILE"),
-			DBEnv:                  dbEnv,
-		}
+	if os.Getenv("DEBUG_MODE") == "true" {
+		log.SetFlags(log.LstdFlags | log.Llongfile)
 	}
-	return *appEnv
+
+	appEnvOnce.Do(func() {
+		if instance == nil {
+
+			dbEnv := DBEnv{
+				DatabaseName: GetRequiredEnv("MONGO_DATABASE"), // required
+				Username:     GetRequiredEnv("MONGO_USERNAME"), // required
+				Password:     GetRequiredEnv("MONGO_PASSWORD"), // required
+				Uri:          GetRequiredEnv("MONGO_URI"),      // required
+			}
+
+			instance = &ApplicationEnv{
+				ApiSecretAuthorization: GetRequiredEnv("API_SECRET_AUTHORIZATION"), // required
+				Port:                   getServerPort(),
+				ContextPath:            getServerContextPath(),
+				PeerResourcePath:       getPeerResourcePath(),
+				ApiSecretKey:           GetRequiredEnv("API_SECRET_KEY"),
+				InitFilePath:           os.Getenv("API_INIT_FILE"),
+				DBEnv:                  dbEnv,
+			}
+		}
+	})
+
+	return *instance
 }
 
 func getPeerResourcePath() string {

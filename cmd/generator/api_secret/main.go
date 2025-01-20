@@ -7,9 +7,11 @@ import (
 	"encoding/pem"
 	"flag"
 	"github.com/atotto/clipboard"
+	"github.com/softwareplace/http-utils/security"
 	"github.com/softwareplace/wireguard-api/pkg/domain/db"
 	"github.com/softwareplace/wireguard-api/pkg/domain/repository/api_secret"
-	"github.com/softwareplace/wireguard-api/pkg/domain/service/security"
+	"github.com/softwareplace/wireguard-api/pkg/domain/service/userPrincipalService"
+	"github.com/softwareplace/wireguard-api/pkg/handlers/request"
 	"github.com/softwareplace/wireguard-api/pkg/models"
 	"github.com/softwareplace/wireguard-api/pkg/utils/env"
 	"log"
@@ -97,7 +99,9 @@ func main() {
 			Bytes: publicKeyBytes,
 		})
 
-		encryptedKey, err := security.GetApiSecurityService().Encrypt(string(publicKeyPEM))
+		principalService := userPrincipalService.GetUserPrincipalService()
+		securityService := security.ApiSecurityServiceBuild[*request.ApiContext](appEnv.ApiSecretAuthorization, principalService)
+		encryptedKey, err := securityService.Encrypt(string(publicKeyPEM))
 
 		if err != nil {
 			log.Fatalf("Failed to sec public key: %s", err)
@@ -119,13 +123,14 @@ func main() {
 			return
 		}
 
+		expirationToken := time.Hour * (time.Duration(*expirationHours))
 		apiJWTInfo := security.ApiJWTInfo{
 			Client:     *clientInfo,
-			Expiration: time.Duration(*expirationHours),
+			Expiration: expirationToken,
 			Key:        *id,
 		}
 
-		apiSecretJWT, err := security.GetApiSecurityService().GenerateApiSecretJWT(apiJWTInfo)
+		apiSecretJWT, err := securityService.GenerateApiSecretJWT(apiJWTInfo)
 
 		if err != nil {
 			return

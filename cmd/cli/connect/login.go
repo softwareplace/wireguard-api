@@ -2,8 +2,8 @@ package connect
 
 import (
 	"fmt"
+	"github.com/softwareplace/http-utils/api_context"
 	"github.com/softwareplace/http-utils/request"
-	httputilsserver "github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/cmd/cli/shared"
 	"github.com/softwareplace/wireguard-api/cmd/cli/spec"
 	"github.com/softwareplace/wireguard-api/pkg/utils/sec"
@@ -76,7 +76,7 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 	config := request.Build(server.Host).
 		WithPath("/login").
 		WithBody(reqBody).
-		WithHeader(httputilsserver.XApiKey, server.ApiKey).
+		WithHeader(api_context.XApiKey, server.ApiKey).
 		WithExpectedStatusCode(http.StatusOK)
 
 	loginResp, err := api.Post(config)
