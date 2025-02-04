@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
 	"flag"
 	"github.com/atotto/clipboard"
@@ -120,7 +121,6 @@ func main() {
 
 		if err != nil {
 			log.Fatalf("Failed to save api secret: %s, %d", err, id)
-			return
 		}
 
 		expirationToken := time.Hour * (time.Duration(*expirationHours))
@@ -133,11 +133,17 @@ func main() {
 		apiSecretJWT, err := securityService.GenerateApiSecretJWT(apiJWTInfo)
 
 		if err != nil {
-			return
+			log.Fatalf("Failed to generate api secret jwt: %s", err)
 		}
 
-		log.Printf("Api Secrte Key generated successfully:\n\n%s\n\n", apiSecretJWT)
-		err = clipboard.WriteAll(apiSecretJWT)
+		bytes, err := json.Marshal(apiSecretJWT)
+
+		if err != nil {
+			log.Fatalf("Failed to marshal api secret jwt: %s", err)
+		}
+		log.Printf("Api Secrte Key generated successfully:\n\n%s\n\n", bytes)
+
+		err = clipboard.WriteAll(apiSecretJWT.Token)
 
 		if err != nil {
 			log.Fatalf("Failed to add jwt to the clipboard: %s", err)
