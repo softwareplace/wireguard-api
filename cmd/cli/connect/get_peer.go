@@ -10,7 +10,7 @@ import (
 )
 
 func GetPeer(profile *spec.Profile, server *spec.Server) models.Peer {
-	api := request.NewApi(models.Peer{})
+	api := request.NewService()
 
 	apiConfig := request.Build(server.Host).
 		WithPath("/peers").
@@ -18,11 +18,18 @@ func GetPeer(profile *spec.Profile, server *spec.Server) models.Peer {
 		WithHeader("Authorization", profile.AuthorizationKey).
 		WithExpectedStatusCode(http.StatusOK)
 
-	response, err := api.Get(apiConfig)
+	_, err := api.Get(apiConfig)
 
 	if err != nil {
 		log.Fatalf("Failed to get peer: %v", err)
 	}
 
-	return *response
+	peer := models.Peer{}
+	err = api.BodyDecode(&peer)
+
+	if err != nil {
+		log.Fatalf("Failed to decode peer: %v", err)
+	}
+
+	return peer
 }

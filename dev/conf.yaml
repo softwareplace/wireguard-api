@@ -9,5 +9,5 @@ servers:
 profiles:
   - name: eliasmeireles
     description: Development server
-    authorization-id: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYzNTUxNjMsInJlcXVlc3QiOiJrRG5ud2wzd3hteHNiRXo5eFpwT1RTNWUxTmFCakluaC9VUEdlWHpJWUZSVlBKRG11OXBRdW1ENHBXZTlrWll4Iiwic2NvcGUiOiI5WkVrVkJhdXNSemZFTUlMTWsxV3JDOXM3dXhCVkY3aVNYZk8wMWpRY1E9PSJ9.dDheBDMI1q6z35xzO_Zx_oFSprOFrul6kfV9wvS_spw
-    expires: "1736355163"
+    authorization-id: ""
+    expires: ""

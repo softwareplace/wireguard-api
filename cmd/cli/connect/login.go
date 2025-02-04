@@ -71,7 +71,7 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 		"password": password,
 	}
 
-	api := request.NewApi(LoginResponse{})
+	api := request.NewService()
 
 	config := request.Build(server.Host).
 		WithPath("/login").
@@ -79,10 +79,21 @@ func Login(args *shared.Args, profile *spec.Profile, server spec.Server) {
 		WithHeader(api_context.XApiKey, server.ApiKey).
 		WithExpectedStatusCode(http.StatusOK)
 
-	loginResp, err := api.Post(config)
+	_, err := api.Post(config)
 
 	if err != nil {
 		log.Fatalf("Failed to login: %v", err)
+	}
+
+	loginResp := LoginResponse{}
+	err = api.BodyDecode(&loginResp)
+
+	if err != nil {
+		log.Fatalf("Failed to decode login response: %v", err)
+	}
+
+	if loginResp.AccessToken == "" || loginResp.Expires == "" {
+		log.Fatalf("Failed to get authorization key")
 	}
 
 	profile.AuthorizationKey = loginResp.AccessToken
