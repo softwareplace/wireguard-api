@@ -34,20 +34,21 @@ func factory(appEnv env.ApplicationEnv) {
 	userLoginService = user_service.GetLoginService(securityService)
 }
 
-func main() {
-	appEnv := env.AppEnv()
+func initializer(apiServer server.ApiRouterHandler[*request.ApiContext]) {
 	db.InitMongoDB()
-
-	factory(appEnv)
-
-	api := server.CreateApiRouter[*request.ApiContext]().
-		RegisterMiddleware(secreteAccessHandler.HandlerSecretAccess, security.ApiSecretAccessHandlerName).
-		RegisterMiddleware(securityService.AuthorizationHandler, security.ApiSecurityHandlerName).
-		WithLoginResource(userLoginService)
-
-	handlers.Init(api)
 	userService.Init()
 	peer.GetService().Load()
+	handlers.Init(apiServer)
+}
 
-	api.StartServer()
+func main() {
+	appEnv := env.AppEnv()
+	factory(appEnv)
+
+	server.CreateApiRouter[*request.ApiContext]().
+		RegisterMiddleware(secreteAccessHandler.HandlerSecretAccess, security.ApiSecretAccessHandlerName).
+		RegisterMiddleware(securityService.AuthorizationHandler, security.ApiSecurityHandlerName).
+		WithLoginResource(userLoginService).
+		EmbeddedServer(initializer).
+		StartServer()
 }
