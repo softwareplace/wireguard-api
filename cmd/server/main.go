@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/softwareplace/goserve/logger"
 	"github.com/softwareplace/http-utils/security"
 	"github.com/softwareplace/http-utils/server"
 	"github.com/softwareplace/wireguard-api/pkg/domain/db"
@@ -39,6 +40,10 @@ func initializer(apiServer server.ApiRouterHandler[*request.ApiContext]) {
 	userService.Init()
 	peer.GetService().Load()
 	handlers.Init(apiServer)
+}
+
+func init() {
+	logger.LogSetup()
 }
 
 func main() {
